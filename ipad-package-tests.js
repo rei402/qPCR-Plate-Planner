@@ -1,0 +1,22 @@
+'use strict';
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const {JSDOM,VirtualConsole}=require('jsdom');
+const dist=path.join(__dirname,'ipad-site','dist'),bundle=path.join(__dirname,'releases','qPCR Plate Planner v2.1.2 iPad');
+const manifest=JSON.parse(fs.readFileSync(path.join(bundle,'IPAD-FREEZE-MANIFEST.json'),'utf8'));
+let passed=0; const test=(name,fn)=>{fn();passed++;console.log('PASS IPAD '+name);};
+test('iPad 网页资源与 v2.1.2 冻结源码逐字节一致',()=>{for(const file of manifest.files) for(const folder of [dist,path.join(bundle,'网页部署文件')]) assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.join(folder,file.path))).digest('hex'),file.sha256,file.path);});
+test('网页入口、主屏幕图标、全部离线缓存资源完整',()=>{const html=fs.readFileSync(path.join(dist,manifest.entry),'utf8'); for(const match of html.matchAll(/(?:src|href)="([^"]+)"/g)) if(!match[1].startsWith('#')) assert.ok(fs.existsSync(path.join(dist,match[1])),match[1]); assert.match(html,/apple-touch-icon/); const pwa=JSON.parse(fs.readFileSync(path.join(dist,'manifest.json'),'utf8'));assert.equal(pwa.display,'standalone');assert.equal(decodeURIComponent(pwa.start_url),'./'+manifest.entry);for(const match of fs.readFileSync(path.join(dist,'sw.js'),'utf8').matchAll(/'\.\/([^']+)'/g)) assert.ok(fs.existsSync(path.join(dist,decodeURIComponent(match[1]))));});
+test('iPad 发布目录仅包含冻结网页资源及根地址跳转',()=>{const allowed=new Set(manifest.files.map(f=>f.path).concat('index.html'));function scan(dir,prefix=''){for(const file of fs.readdirSync(dir,{withFileTypes:true})) {const relative=prefix+file.name;if(file.isDirectory())scan(path.join(dir,file.name),relative+'/');else assert.ok(allowed.has(relative),relative);}}scan(dist);assert.match(fs.readFileSync(path.join(dist,'index.html'),'utf8'),/qPCR%20Plate%20Planner.html/);});
+(async()=>{
+  const errors=[],vc=new VirtualConsole();vc.on('jsdomError',e=>{if(!e.message.includes('navigation'))errors.push(e);});
+  const dom=await JSDOM.fromFile(path.join(dist,manifest.entry),{resources:'usable',runScripts:'dangerously',pretendToBeVisual:true,virtualConsole:vc,beforeParse(w){w.__QPCR_TEST__=true;w.confirm=()=>true;w.alert=()=>{};const saved=new Map();Object.defineProperty(w,'localStorage',{value:{getItem:k=>saved.get(k)||null,setItem:(k,v)=>saved.set(k,v),removeItem:k=>saved.delete(k)}});w.URL.createObjectURL=()=> 'blob:test';w.URL.revokeObjectURL=()=>{};w.HTMLAnchorElement.prototype.click=function(){w.__filename=this.download;};}});
+  await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('load timeout')),10000);dom.window.addEventListener('load',()=>{clearTimeout(timer);resolve();},{once:true});});
+  const w=dom.window,api=w.QPCRTest,$=id=>w.document.getElementById(id);
+  try {
+    test('打包后的 96/384 排板、JSON 原孔位恢复与打印内容一致',()=>{for(const type of [96,384]){const p=w.QPCR.newProject();p.plateType=type;api.setForm(p);api.generate();assert.ok(api.state.result?.ok);const mapping=JSON.stringify(api.snapshot().plateLayout);assert.equal($('printSheet').querySelectorAll('.occupied').length,api.state.result.plates[0].wells.length);api.applyLoaded(api.snapshot());assert.equal(JSON.stringify(api.snapshot().plateLayout),mapping);assert.equal(api.state.project.settings.printOrientation,'portrait');}});
+    test('缺少全屏和 Wake Lock 时 Tablet Guide 可继续校准并锁定',()=>{$('tabletGuideButton').click();const stage=$('tgStage'),guide=$('tabletGuide');Object.defineProperty(stage,'clientWidth',{value:850});Object.defineProperty(stage,'clientHeight',{value:650});Object.defineProperty(guide,'clientWidth',{value:1366});Object.defineProperty(guide,'clientHeight',{value:1024});$('tgReset').click();$('tgLock').click();assert.equal($('tgRunControls').hidden,false);assert.match($('tgWakeStatus').textContent,/自动锁屏/);$('tgNext').click();assert.ok(api.state.step>0);$('tgExit').click();});
+    test('打包后的项目保存能生成 JSON 文件',()=>{$('saveButton').click();assert.match(w.__filename,/_qPCR.json$/);assert.equal(api.persistDraft(),true);});
+    assert.equal(errors.length,0,errors.map(e=>e.message).join('\n'));
+  } finally {dom.window.close();}
+  console.log(`${passed}/${passed} iPad package checks passed (DOM simulation; not physical iPad testing)`);
+})().catch(e=>{console.error(e);process.exitCode=1;});

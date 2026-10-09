@@ -1,0 +1,24 @@
+{
+  "version": "2.1.2",
+  "versionCode": 20102,
+  "applicationId": "org.qpcrplateplanner.app",
+  "minSdk": 26,
+  "targetSdk": 35,
+  "sourceZipSha256": "48988ca75f44b7c7283fca73adcc514beddc28b92cce085239c641551fb19b52",
+  "apkSha256": "fbeda664272ed024831c34cd079264c2b8d765ad9d8d960ab5c40d3af0dedb96",
+  "size": 220296,
+  "frozenRuntimeFilesVerified": 23,
+  "htmlAdaptation": "adds native-adapter.js before frozen scripts; core files unchanged",
+  "signingVerification": "Verifies\nVerified using v1 scheme (JAR signing): false\nVerified using v2 scheme (APK Signature Scheme v2): true\nVerified using v3 scheme (APK Signature Scheme v3): true\nVerified using v3.1 scheme (APK Signature Scheme v3.1): false\nVerified using v4 scheme (APK Signature Scheme v4): false\nVerified for SourceStamp: false\nNumber of signers: 1\nSigner #1 certificate DN: CN=qPCR Plate Planner, OU=Laboratory Software, O=qPCR Plate Planner\nSigner #1 certificate SHA-256 digest: 89fbe1df57c93c518a15cef91e33d0b7bc9fbed1ac82b8b9c1bb0e02399acd24\nSigner #1 certificate SHA-1 digest: 8e6d5049cc32ea2b0ae834156b01ba78ce247b8d\nSigner #1 certificate MD5 digest: a2a787ba7bf6e5e5db309218eb8aa141\nSigner #1 key algorithm: RSA\nSigner #1 key size (bits): 4096\nSigner #1 public key SHA-256 digest: 91601241d7e002d66b9a83e36233b5fc61d2fb4ead0a56cd4c0df3662daf2f8c\nSigner #1 public key SHA-1 digest: 2e5add31eada522edeaa89d9b32b30d4fd5b266c\nSigner #1 public key MD5 digest: 3865802acec3da922c3157561ec4e3c6\n",
+  "tests": [
+    "16/16 native policy checks",
+    "6/6 adapter DOM checks",
+    "official aapt2/javac/D8 compilation",
+    "apksigner verify",
+    "zipalign verify",
+    "23 frozen asset hashes verified",
+    "7/7 packaged APK DOM integration checks"
+  ],
+  "physicalDeviceTesting": false,
+  "signingKeyPackaged": false
+}

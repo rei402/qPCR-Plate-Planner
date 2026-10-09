@@ -1,0 +1,948 @@
+{
+  "version": 1,
+  "appVersion": "2.0.0",
+  "layoutVersion": 2,
+  "savedAt": "2026-09-30T09:13:06.795Z",
+  "project": {
+    "version": 1,
+    "metadata": {
+      "name": "v2 功能演示（虚构样本）",
+      "operator": "示例",
+      "date": "2026-09-30"
+    },
+    "plateType": 96,
+    "replicates": 3,
+    "reactionVolume": 10,
+    "samples": [
+      "Control_1",
+      "Control_2",
+      "Control_3",
+      "Control_4",
+      "Control_5",
+      "Control_6",
+      "Treatment_1",
+      "Treatment_2",
+      "Treatment_3",
+      "Treatment_4",
+      "Treatment_5",
+      "Treatment_6"
+    ],
+    "genes": [
+      {
+        "id": "g1",
+        "name": "GPR107",
+        "type": "target",
+        "colorIndex": 0
+      },
+      {
+        "id": "g2",
+        "name": "ADCY3",
+        "type": "target",
+        "colorIndex": 1
+      },
+      {
+        "id": "g3",
+        "name": "GAPDH",
+        "type": "reference",
+        "colorIndex": 2
+      }
+    ],
+    "controls": {
+      "ntc": true,
+      "ntcReplicateMode": "custom",
+      "ntcCustomReplicates": 1,
+      "ntcReplicates": 1,
+      "noRT": "selected",
+      "noRTSamples": [
+        "Control_1"
+      ],
+      "positive": false,
+      "positiveName": "",
+      "calibratorSample": "Control_1",
+      "scope": "plate",
+      "noRTReplicates": 2,
+      "positiveReplicates": 1
+    },
+    "recipe": {
+      "name": "SYBR 10 µL（示例）",
+      "assayPremix": {
+        "enabled": true,
+        "name": "Primer Mix",
+        "componentIds": [
+          "c1",
+          "c2",
+          "c3"
+        ],
+        "wastePercent": null,
+        "minimumExtraReactions": null
+      },
+      "components": [
+        {
+          "name": "2× SYBR Mix",
+          "volumePerReaction": 5,
+          "role": "mastermix",
+          "id": "c0"
+        },
+        {
+          "name": "Forward primer",
+          "volumePerReaction": 0.2,
+          "role": "forward_primer",
+          "id": "c1"
+        },
+        {
+          "name": "Reverse primer",
+          "volumePerReaction": 0.2,
+          "role": "reverse_primer",
+          "id": "c2"
+        },
+        {
+          "name": "Water",
+          "volumePerReaction": 2.6,
+          "role": "water",
+          "id": "c3"
+        },
+        {
+          "name": "Template",
+          "volumePerReaction": 2,
+          "role": "template",
+          "id": "c4"
+        }
+      ]
+    },
+    "settings": {
+      "wastePercent": 10,
+      "minimumExtra": 1,
+      "minPipetteVolume": 0.5,
+      "pipette": "single",
+      "layoutMode": "optimized",
+      "allocationMode": "balanced",
+      "printOrientation": "landscape",
+      "display": {
+        "plateZoom": 1,
+        "colorBy": "sample",
+        "paletteId": "scientificSoft"
+      },
+      "reserved": [
+        "A1",
+        "H12"
+      ],
+      "checklist": [
+        [
+          "实验前",
+          "已确认 Plate 类型",
+          "已确认反应总体积",
+          "已确认 Sample 顺序",
+          "已确认 Primer / Assay",
+          "已确认模板浓度或稀释",
+          "试剂已充分解冻",
+          "试剂已混匀并短暂离心"
+        ],
+        [
+          "Master Mix",
+          "已核对 Master Mix 配方",
+          "已加入余量",
+          "Master Mix 已混匀",
+          "Master Mix 已短暂离心",
+          "已完成 Master Mix 分液"
+        ],
+        [
+          "Template",
+          "已再次确认 Sample 排列",
+          "已完成 Template 加样",
+          "NTC 已最后加入"
+        ],
+        [
+          "Plate",
+          "已确认 A1 方向",
+          "已确认孔板排布",
+          "已封板",
+          "已离心",
+          "已检查气泡"
+        ],
+        [
+          "上机",
+          "已确认 qPCR 程序",
+          "已确认反应体积",
+          "已确认 Dye / Channel",
+          "已确认 Plate 类型",
+          "已填写实验文件名"
+        ]
+      ],
+      "pipettePitch": "adjacent"
+    },
+    "assayRecipes": {
+      "g2": {
+        "reactionVolume": 20,
+        "recipe": {
+          "name": "SYBR 10 µL（示例）",
+          "assayPremix": {
+            "enabled": true,
+            "name": "Primer Mix",
+            "componentIds": [
+              "c1",
+              "c2",
+              "c3"
+            ],
+            "wastePercent": null,
+            "minimumExtraReactions": null
+          },
+          "components": [
+            {
+              "name": "2× SYBR Mix",
+              "volumePerReaction": 10,
+              "role": "mastermix",
+              "id": "c0"
+            },
+            {
+              "name": "Forward primer",
+              "volumePerReaction": 0.4,
+              "role": "forward_primer",
+              "id": "c1"
+            },
+            {
+              "name": "Reverse primer",
+              "volumePerReaction": 0.4,
+              "role": "reverse_primer",
+              "id": "c2"
+            },
+            {
+              "name": "Water",
+              "volumePerReaction": 5.2,
+              "role": "water",
+              "id": "c3"
+            },
+            {
+              "name": "Template",
+              "volumePerReaction": 4,
+              "role": "template",
+              "id": "c4"
+            }
+          ]
+        }
+      }
+    },
+    "sampleMetadata": {
+      "Control_1": {
+        "id": "sample-0",
+        "group": "对照",
+        "biologicalReplicate": "1",
+        "colorIndex": 0
+      },
+      "Control_2": {
+        "id": "sample-1",
+        "group": "对照",
+        "biologicalReplicate": "2",
+        "colorIndex": 1
+      },
+      "Control_3": {
+        "id": "sample-2",
+        "group": "对照",
+        "biologicalReplicate": "3",
+        "colorIndex": 2
+      },
+      "Control_4": {
+        "id": "sample-3",
+        "group": "对照",
+        "biologicalReplicate": "4",
+        "colorIndex": 3
+      },
+      "Control_5": {
+        "id": "sample-4",
+        "group": "对照",
+        "biologicalReplicate": "5",
+        "colorIndex": 4
+      },
+      "Control_6": {
+        "id": "sample-5",
+        "group": "对照",
+        "biologicalReplicate": "6",
+        "colorIndex": 5
+      },
+      "Treatment_1": {
+        "id": "sample-6",
+        "group": "处理",
+        "biologicalReplicate": "1",
+        "colorIndex": 6
+      },
+      "Treatment_2": {
+        "id": "sample-7",
+        "group": "处理",
+        "biologicalReplicate": "2",
+        "colorIndex": 7
+      },
+      "Treatment_3": {
+        "id": "sample-8",
+        "group": "处理",
+        "biologicalReplicate": "3",
+        "colorIndex": 8
+      },
+      "Treatment_4": {
+        "id": "sample-9",
+        "group": "处理",
+        "biologicalReplicate": "4",
+        "colorIndex": 9
+      },
+      "Treatment_5": {
+        "id": "sample-10",
+        "group": "处理",
+        "biologicalReplicate": "5",
+        "colorIndex": 10
+      },
+      "Treatment_6": {
+        "id": "sample-11",
+        "group": "处理",
+        "biologicalReplicate": "6",
+        "colorIndex": 11
+      }
+    },
+    "assaySelection": [
+      {
+        "sample": "Control_1",
+        "geneId": "g1"
+      },
+      {
+        "sample": "Control_1",
+        "geneId": "g2"
+      },
+      {
+        "sample": "Control_1",
+        "geneId": "g3"
+      },
+      {
+        "sample": "Control_2",
+        "geneId": "g1"
+      },
+      {
+        "sample": "Control_2",
+        "geneId": "g2"
+      },
+      {
+        "sample": "Control_2",
+        "geneId": "g3"
+      },
+      {
+        "sample": "Control_3",
+        "geneId": "g1"
+      },
+      {
+        "sample": "Control_3",
+        "geneId": "g2"
+      },
+      {
+        "sample": "Control_3",
+        "geneId": "g3"
+      },
+      {
+        "sample": "Control_4",
+        "geneId": "g1"
+      },
+      {
+        "sample": "Control_4",
+        "geneId": "g3"
+      },
+      {
+        "sample": "Control_5",
+        "geneId": "g1"
+      },
+      {
+        "sample": "Control_5",
+        "geneId": "g2"
+      },
+      {
+        "sample": "Control_5",
+        "geneId": "g3"
+      },
+      {
+        "sample": "Control_6",
+        "geneId": "g1"
+      },
+      {
+        "sample": "Control_6",
+        "geneId": "g2"
+      },
+      {
+        "sample": "Control_6",
+        "geneId": "g3"
+      },
+      {
+        "sample": "Treatment_1",
+        "geneId": "g1"
+      },
+      {
+        "sample": "Treatment_1",
+        "geneId": "g2"
+      },
+      {
+        "sample": "Treatment_1",
+        "geneId": "g3"
+      },
+      {
+        "sample": "Treatment_2",
+        "geneId": "g1"
+      },
+      {
+        "sample": "Treatment_2",
+        "geneId": "g2"
+      },
+      {
+        "sample": "Treatment_2",
+        "geneId": "g3"
+      },
+      {
+        "sample": "Treatment_3",
+        "geneId": "g1"
+      },
+      {
+        "sample": "Treatment_3",
+        "geneId": "g2"
+      },
+      {
+        "sample": "Treatment_3",
+        "geneId": "g3"
+      },
+      {
+        "sample": "Treatment_4",
+        "geneId": "g1"
+      },
+      {
+        "sample": "Treatment_4",
+        "geneId": "g2"
+      },
+      {
+        "sample": "Treatment_4",
+        "geneId": "g3"
+      },
+      {
+        "sample": "Treatment_5",
+        "geneId": "g1"
+      },
+      {
+        "sample": "Treatment_5",
+        "geneId": "g2"
+      },
+      {
+        "sample": "Treatment_5",
+        "geneId": "g3"
+      },
+      {
+        "sample": "Treatment_6",
+        "geneId": "g1"
+      },
+      {
+        "sample": "Treatment_6",
+        "geneId": "g2"
+      },
+      {
+        "sample": "Treatment_6",
+        "geneId": "g3"
+      }
+    ]
+  },
+  "execution": {
+    "version": 1,
+    "layoutFingerprint": "[{\"number\":1,\"wells\":[[\"noRT|Control_1|g1|1|plate1\",\"H10\"],[\"noRT|Control_1|g1|2|plate1\",\"H9\"],[\"noRT|Control_1|g2|1|plate1\",\"H8\"],[\"noRT|Control_1|g2|2|plate1\",\"H7\"],[\"noRT|Control_1|g3|1|plate1\",\"H6\"],[\"noRT|Control_1|g3|2|plate1\",\"H5\"],[\"ntc|NTC|g1|1|plate1\",\"H4\"],[\"ntc|NTC|g2|1|plate1\",\"H3\"],[\"ntc|NTC|g3|1|plate1\",\"H2\"],[\"sample|Control_1|g1|1\",\"A2\"],[\"sample|Control_1|g1|2\",\"A3\"],[\"sample|Control_1|g1|3\",\"A4\"],[\"sample|Control_1|g2|1\",\"A5\"],[\"sample|Control_1|g2|2\",\"A6\"],[\"sample|Control_1|g2|3\",\"A7\"],[\"sample|Control_1|g3|1\",\"A8\"],[\"sample|Control_1|g3|2\",\"A9\"],[\"sample|Control_1|g3|3\",\"A10\"],[\"sample|Control_2|g1|1\",\"A11\"],[\"sample|Control_2|g1|2\",\"A12\"],[\"sample|Control_2|g1|3\",\"B12\"],[\"sample|Control_2|g2|1\",\"B11\"],[\"sample|Control_2|g2|2\",\"B10\"],[\"sample|Control_2|g2|3\",\"B9\"],[\"sample|Control_2|g3|1\",\"B8\"],[\"sample|Control_2|g3|2\",\"B7\"],[\"sample|Control_2|g3|3\",\"B6\"],[\"sample|Control_3|g1|1\",\"B5\"],[\"sample|Control_3|g1|2\",\"B4\"],[\"sample|Control_3|g1|3\",\"B3\"],[\"sample|Control_3|g2|1\",\"B2\"],[\"sample|Control_3|g2|2\",\"B1\"],[\"sample|Control_3|g2|3\",\"C1\"],[\"sample|Control_3|g3|1\",\"C2\"],[\"sample|Control_3|g3|2\",\"C3\"],[\"sample|Control_3|g3|3\",\"C4\"],[\"sample|Control_4|g1|1\",\"C5\"],[\"sample|Control_4|g1|2\",\"C6\"],[\"sample|Control_4|g1|3\",\"C7\"],[\"sample|Control_4|g3|1\",\"C8\"],[\"sample|Control_4|g3|2\",\"C9\"],[\"sample|Control_4|g3|3\",\"C10\"],[\"sample|Control_5|g1|1\",\"C11\"],[\"sample|Control_5|g1|2\",\"C12\"],[\"sample|Control_5|g1|3\",\"D12\"],[\"sample|Control_5|g2|1\",\"D11\"],[\"sample|Control_5|g2|2\",\"D10\"],[\"sample|Control_5|g2|3\",\"D9\"],[\"sample|Control_5|g3|1\",\"D8\"],[\"sample|Control_5|g3|2\",\"D7\"],[\"sample|Control_5|g3|3\",\"D6\"],[\"sample|Control_6|g1|1\",\"D5\"],[\"sample|Control_6|g1|2\",\"D4\"],[\"sample|Control_6|g1|3\",\"D3\"],[\"sample|Control_6|g2|1\",\"D2\"],[\"sample|Control_6|g2|2\",\"D1\"],[\"sample|Control_6|g2|3\",\"E1\"],[\"sample|Treatment_1|g1|1\",\"E2\"],[\"sample|Treatment_1|g1|2\",\"E3\"],[\"sample|Treatment_1|g1|3\",\"E4\"],[\"sample|Treatment_1|g2|1\",\"E5\"],[\"sample|Treatment_1|g2|2\",\"E6\"],[\"sample|Treatment_1|g2|3\",\"E7\"],[\"sample|Treatment_2|g1|1\",\"E8\"],[\"sample|Treatment_2|g1|2\",\"E9\"],[\"sample|Treatment_2|g1|3\",\"E10\"],[\"sample|Treatment_2|g2|1\",\"E11\"],[\"sample|Treatment_2|g2|2\",\"E12\"],[\"sample|Treatment_2|g2|3\",\"F12\"],[\"sample|Treatment_3|g1|1\",\"F11\"],[\"sample|Treatment_3|g1|2\",\"F10\"],[\"sample|Treatment_3|g1|3\",\"F9\"],[\"sample|Treatment_3|g2|1\",\"F8\"],[\"sample|Treatment_3|g2|2\",\"F7\"],[\"sample|Treatment_3|g2|3\",\"F6\"],[\"sample|Treatment_4|g1|1\",\"F5\"],[\"sample|Treatment_4|g1|2\",\"F4\"],[\"sample|Treatment_4|g1|3\",\"F3\"],[\"sample|Treatment_4|g2|1\",\"F2\"],[\"sample|Treatment_4|g2|2\",\"F1\"],[\"sample|Treatment_4|g2|3\",\"G1\"],[\"sample|Treatment_5|g1|1\",\"G2\"],[\"sample|Treatment_5|g1|2\",\"G3\"],[\"sample|Treatment_5|g1|3\",\"G4\"],[\"sample|Treatment_5|g2|1\",\"G5\"],[\"sample|Treatment_5|g2|2\",\"G6\"],[\"sample|Treatment_5|g2|3\",\"G7\"],[\"sample|Treatment_6|g1|1\",\"G8\"],[\"sample|Treatment_6|g1|2\",\"G9\"],[\"sample|Treatment_6|g1|3\",\"G10\"],[\"sample|Treatment_6|g2|1\",\"G11\"],[\"sample|Treatment_6|g2|2\",\"G12\"],[\"sample|Treatment_6|g2|3\",\"H11\"]],\"steps\":[[\"prepare-premix\",\"配制 GPR107 Primer Mix\",3,144,[]],[\"prepare-premix\",\"配制 ADCY3 Primer Mix\",6,264,[]],[\"prepare-premix\",\"配制 GAPDH Primer Mix\",3,66,[]],[\"prepare-final\",\"配制 GPR107 Final Master Mix\",8,344,[]],[\"prepare-final\",\"配制 ADCY3 Final Master Mix\",16,640,[]],[\"prepare-final\",\"配制 GAPDH Final Master Mix\",8,160,[]],[\"mix\",\"加入 GPR107 Master Mix\",8,312,[\"A2\",\"A3\",\"A4\",\"A11\",\"A12\",\"B12\",\"B5\",\"B4\",\"B3\",\"C5\",\"C6\",\"C7\",\"C11\",\"C12\",\"D12\",\"D5\",\"D4\",\"D3\",\"E2\",\"E3\",\"E4\",\"E8\",\"E9\",\"E10\",\"F11\",\"F10\",\"F9\",\"F5\",\"F4\",\"F3\",\"G2\",\"G3\",\"G4\",\"G8\",\"G9\",\"G10\",\"H10\",\"H9\",\"H4\"]],[\"mix\",\"加入 ADCY3 Master Mix\",16,576,[\"A5\",\"A6\",\"A7\",\"B11\",\"B10\",\"B9\",\"B2\",\"B1\",\"C1\",\"D11\",\"D10\",\"D9\",\"D2\",\"D1\",\"E1\",\"E5\",\"E6\",\"E7\",\"E11\",\"E12\",\"F12\",\"F8\",\"F7\",\"F6\",\"F2\",\"F1\",\"G1\",\"G5\",\"G6\",\"G7\",\"G11\",\"G12\",\"H11\",\"H8\",\"H7\",\"H3\"]],[\"mix\",\"加入 GAPDH Master Mix\",8,144,[\"A8\",\"A9\",\"A10\",\"B8\",\"B7\",\"B6\",\"C2\",\"C3\",\"C4\",\"C8\",\"C9\",\"C10\",\"D8\",\"D7\",\"D6\",\"H6\",\"H5\",\"H2\"]],[\"sample\",\"加入 Sample：Control_1 · 2.0 µL / 孔\",2,12,[\"A2\",\"A3\",\"A4\",\"A8\",\"A9\",\"A10\"]],[\"sample\",\"加入 Sample：Control_1 · 4.0 µL / 孔\",4,12,[\"A5\",\"A6\",\"A7\"]],[\"sample\",\"加入 Sample：Control_2 · 2.0 µL / 孔\",2,12,[\"A11\",\"A12\",\"B12\",\"B8\",\"B7\",\"B6\"]],[\"sample\",\"加入 Sample：Control_2 · 4.0 µL / 孔\",4,12,[\"B11\",\"B10\",\"B9\"]],[\"sample\",\"加入 Sample：Control_3 · 2.0 µL / 孔\",2,12,[\"B5\",\"B4\",\"B3\",\"C2\",\"C3\",\"C4\"]],[\"sample\",\"加入 Sample：Control_3 · 4.0 µL / 孔\",4,12,[\"B2\",\"B1\",\"C1\"]],[\"sample\",\"加入 Sample：Control_4\",2,12,[\"C5\",\"C6\",\"C7\",\"C8\",\"C9\",\"C10\"]],[\"sample\",\"加入 Sample：Control_5 · 2.0 µL / 孔\",2,12,[\"C11\",\"C12\",\"D12\",\"D8\",\"D7\",\"D6\"]],[\"sample\",\"加入 Sample：Control_5 · 4.0 µL / 孔\",4,12,[\"D11\",\"D10\",\"D9\"]],[\"sample\",\"加入 Sample：Control_6 · 2.0 µL / 孔\",2,6,[\"D5\",\"D4\",\"D3\"]],[\"sample\",\"加入 Sample：Control_6 · 4.0 µL / 孔\",4,12,[\"D2\",\"D1\",\"E1\"]],[\"sample\",\"加入 Sample：Treatment_1 · 2.0 µL / 孔\",2,6,[\"E2\",\"E3\",\"E4\"]],[\"sample\",\"加入 Sample：Treatment_1 · 4.0 µL / 孔\",4,12,[\"E5\",\"E6\",\"E7\"]],[\"sample\",\"加入 Sample：Treatment_2 · 2.0 µL / 孔\",2,6,[\"E8\",\"E9\",\"E10\"]],[\"sample\",\"加入 Sample：Treatment_2 · 4.0 µL / 孔\",4,12,[\"E11\",\"E12\",\"F12\"]],[\"sample\",\"加入 Sample：Treatment_3 · 2.0 µL / 孔\",2,6,[\"F11\",\"F10\",\"F9\"]],[\"sample\",\"加入 Sample：Treatment_3 · 4.0 µL / 孔\",4,12,[\"F8\",\"F7\",\"F6\"]],[\"sample\",\"加入 Sample：Treatment_4 · 2.0 µL / 孔\",2,6,[\"F5\",\"F4\",\"F3\"]],[\"sample\",\"加入 Sample：Treatment_4 · 4.0 µL / 孔\",4,12,[\"F2\",\"F1\",\"G1\"]],[\"sample\",\"加入 Sample：Treatment_5 · 2.0 µL / 孔\",2,6,[\"G2\",\"G3\",\"G4\"]],[\"sample\",\"加入 Sample：Treatment_5 · 4.0 µL / 孔\",4,12,[\"G5\",\"G6\",\"G7\"]],[\"sample\",\"加入 Sample：Treatment_6 · 2.0 µL / 孔\",2,6,[\"G8\",\"G9\",\"G10\"]],[\"sample\",\"加入 Sample：Treatment_6 · 4.0 µL / 孔\",4,12,[\"G11\",\"G12\",\"H11\"]],[\"noRT\",\"加入 No-RT：Control_1 · 2.0 µL / 孔\",2,8,[\"H10\",\"H9\",\"H6\",\"H5\"]],[\"noRT\",\"加入 No-RT：Control_1 · 4.0 µL / 孔\",4,8,[\"H8\",\"H7\"]],[\"ntc\",\"最后加入 NTC 无模板对照 · 2.0 µL / 孔\",2,4,[\"H4\",\"H2\"]],[\"ntc\",\"最后加入 NTC 无模板对照 · 4.0 µL / 孔\",4,4,[\"H3\"]],[\"check\",\"封板\",0,0,[]],[\"check\",\"短暂离心\",0,0,[]],[\"check\",\"检查气泡与孔位\",0,0,[]],[\"check\",\"上机前复核程序和通道\",0,0,[]]]},{\"number\":2,\"wells\":[[\"calibrator|Control_1|g1|2\",\"B2\"],[\"calibrator|Control_1|g2|2\",\"B1\"],[\"calibrator|Control_1|g3|2\",\"C1\"],[\"ntc|NTC|g1|1|plate2\",\"C2\"],[\"ntc|NTC|g2|1|plate2\",\"C3\"],[\"ntc|NTC|g3|1|plate2\",\"C4\"],[\"sample|Control_6|g3|1\",\"A2\"],[\"sample|Control_6|g3|2\",\"A3\"],[\"sample|Control_6|g3|3\",\"A4\"],[\"sample|Treatment_1|g3|1\",\"A5\"],[\"sample|Treatment_1|g3|2\",\"A6\"],[\"sample|Treatment_1|g3|3\",\"A7\"],[\"sample|Treatment_2|g3|1\",\"A8\"],[\"sample|Treatment_2|g3|2\",\"A9\"],[\"sample|Treatment_2|g3|3\",\"A10\"],[\"sample|Treatment_3|g3|1\",\"A11\"],[\"sample|Treatment_3|g3|2\",\"A12\"],[\"sample|Treatment_3|g3|3\",\"B12\"],[\"sample|Treatment_4|g3|1\",\"B11\"],[\"sample|Treatment_4|g3|2\",\"B10\"],[\"sample|Treatment_4|g3|3\",\"B9\"],[\"sample|Treatment_5|g3|1\",\"B8\"],[\"sample|Treatment_5|g3|2\",\"B7\"],[\"sample|Treatment_5|g3|3\",\"B6\"],[\"sample|Treatment_6|g3|1\",\"B5\"],[\"sample|Treatment_6|g3|2\",\"B4\"],[\"sample|Treatment_6|g3|3\",\"B3\"]],\"steps\":[[\"prepare-premix\",\"配制 GPR107 Primer Mix\",3,12,[]],[\"prepare-premix\",\"配制 ADCY3 Primer Mix\",6,24,[]],[\"prepare-premix\",\"配制 GAPDH Primer Mix\",3,87,[]],[\"prepare-final\",\"配制 GPR107 Final Master Mix\",8,24,[]],[\"prepare-final\",\"配制 ADCY3 Final Master Mix\",16,48,[]],[\"prepare-final\",\"配制 GAPDH Final Master Mix\",8,208,[]],[\"mix\",\"加入 GPR107 Master Mix\",8,16,[\"B2\",\"C2\"]],[\"mix\",\"加入 ADCY3 Master Mix\",16,32,[\"B1\",\"C3\"]],[\"mix\",\"加入 GAPDH Master Mix\",8,184,[\"A2\",\"A3\",\"A4\",\"A5\",\"A6\",\"A7\",\"A8\",\"A9\",\"A10\",\"A11\",\"A12\",\"B12\",\"B11\",\"B10\",\"B9\",\"B8\",\"B7\",\"B6\",\"B5\",\"B4\",\"B3\",\"C1\",\"C4\"]],[\"sample\",\"加入 Sample：Control_6\",2,6,[\"A2\",\"A3\",\"A4\"]],[\"sample\",\"加入 Sample：Treatment_1\",2,6,[\"A5\",\"A6\",\"A7\"]],[\"sample\",\"加入 Sample：Treatment_2\",2,6,[\"A8\",\"A9\",\"A10\"]],[\"sample\",\"加入 Sample：Treatment_3\",2,6,[\"A11\",\"A12\",\"B12\"]],[\"sample\",\"加入 Sample：Treatment_4\",2,6,[\"B11\",\"B10\",\"B9\"]],[\"sample\",\"加入 Sample：Treatment_5\",2,6,[\"B8\",\"B7\",\"B6\"]],[\"sample\",\"加入 Sample：Treatment_6\",2,6,[\"B5\",\"B4\",\"B3\"]],[\"calibrator\",\"加入跨板校准样本 · 2.0 µL / 孔\",2,4,[\"B2\",\"C1\"]],[\"calibrator\",\"加入跨板校准样本 · 4.0 µL / 孔\",4,4,[\"B1\"]],[\"ntc\",\"最后加入 NTC 无模板对照 · 2.0 µL / 孔\",2,4,[\"C2\",\"C4\"]],[\"ntc\",\"最后加入 NTC 无模板对照 · 4.0 µL / 孔\",4,4,[\"C3\"]],[\"check\",\"封板\",0,0,[]],[\"check\",\"短暂离心\",0,0,[]],[\"check\",\"检查气泡与孔位\",0,0,[]],[\"check\",\"上机前复核程序和通道\",0,0,[]]]}]",
+    "plates": {
+      "1": {
+        "cursor": "[\"prepare-premix\",\"配制 GPR107 Primer Mix\",[],3,144]",
+        "completed": {}
+      },
+      "2": {
+        "cursor": "[\"prepare-premix\",\"配制 GPR107 Primer Mix\",[],3,12]",
+        "completed": {}
+      }
+    },
+    "updatedAt": null
+  },
+  "plateLayout": [
+    {
+      "number": 1,
+      "wells": [
+        {
+          "well": "A2",
+          "reactionId": "sample|Control_1|g1|1"
+        },
+        {
+          "well": "A3",
+          "reactionId": "sample|Control_1|g1|2"
+        },
+        {
+          "well": "A4",
+          "reactionId": "sample|Control_1|g1|3"
+        },
+        {
+          "well": "A5",
+          "reactionId": "sample|Control_1|g2|1"
+        },
+        {
+          "well": "A6",
+          "reactionId": "sample|Control_1|g2|2"
+        },
+        {
+          "well": "A7",
+          "reactionId": "sample|Control_1|g2|3"
+        },
+        {
+          "well": "A8",
+          "reactionId": "sample|Control_1|g3|1"
+        },
+        {
+          "well": "A9",
+          "reactionId": "sample|Control_1|g3|2"
+        },
+        {
+          "well": "A10",
+          "reactionId": "sample|Control_1|g3|3"
+        },
+        {
+          "well": "A11",
+          "reactionId": "sample|Control_2|g1|1"
+        },
+        {
+          "well": "A12",
+          "reactionId": "sample|Control_2|g1|2"
+        },
+        {
+          "well": "B12",
+          "reactionId": "sample|Control_2|g1|3"
+        },
+        {
+          "well": "B11",
+          "reactionId": "sample|Control_2|g2|1"
+        },
+        {
+          "well": "B10",
+          "reactionId": "sample|Control_2|g2|2"
+        },
+        {
+          "well": "B9",
+          "reactionId": "sample|Control_2|g2|3"
+        },
+        {
+          "well": "B8",
+          "reactionId": "sample|Control_2|g3|1"
+        },
+        {
+          "well": "B7",
+          "reactionId": "sample|Control_2|g3|2"
+        },
+        {
+          "well": "B6",
+          "reactionId": "sample|Control_2|g3|3"
+        },
+        {
+          "well": "B5",
+          "reactionId": "sample|Control_3|g1|1"
+        },
+        {
+          "well": "B4",
+          "reactionId": "sample|Control_3|g1|2"
+        },
+        {
+          "well": "B3",
+          "reactionId": "sample|Control_3|g1|3"
+        },
+        {
+          "well": "B2",
+          "reactionId": "sample|Control_3|g2|1"
+        },
+        {
+          "well": "B1",
+          "reactionId": "sample|Control_3|g2|2"
+        },
+        {
+          "well": "C1",
+          "reactionId": "sample|Control_3|g2|3"
+        },
+        {
+          "well": "C2",
+          "reactionId": "sample|Control_3|g3|1"
+        },
+        {
+          "well": "C3",
+          "reactionId": "sample|Control_3|g3|2"
+        },
+        {
+          "well": "C4",
+          "reactionId": "sample|Control_3|g3|3"
+        },
+        {
+          "well": "C5",
+          "reactionId": "sample|Control_4|g1|1"
+        },
+        {
+          "well": "C6",
+          "reactionId": "sample|Control_4|g1|2"
+        },
+        {
+          "well": "C7",
+          "reactionId": "sample|Control_4|g1|3"
+        },
+        {
+          "well": "C8",
+          "reactionId": "sample|Control_4|g3|1"
+        },
+        {
+          "well": "C9",
+          "reactionId": "sample|Control_4|g3|2"
+        },
+        {
+          "well": "C10",
+          "reactionId": "sample|Control_4|g3|3"
+        },
+        {
+          "well": "C11",
+          "reactionId": "sample|Control_5|g1|1"
+        },
+        {
+          "well": "C12",
+          "reactionId": "sample|Control_5|g1|2"
+        },
+        {
+          "well": "D12",
+          "reactionId": "sample|Control_5|g1|3"
+        },
+        {
+          "well": "D11",
+          "reactionId": "sample|Control_5|g2|1"
+        },
+        {
+          "well": "D10",
+          "reactionId": "sample|Control_5|g2|2"
+        },
+        {
+          "well": "D9",
+          "reactionId": "sample|Control_5|g2|3"
+        },
+        {
+          "well": "D8",
+          "reactionId": "sample|Control_5|g3|1"
+        },
+        {
+          "well": "D7",
+          "reactionId": "sample|Control_5|g3|2"
+        },
+        {
+          "well": "D6",
+          "reactionId": "sample|Control_5|g3|3"
+        },
+        {
+          "well": "D5",
+          "reactionId": "sample|Control_6|g1|1"
+        },
+        {
+          "well": "D4",
+          "reactionId": "sample|Control_6|g1|2"
+        },
+        {
+          "well": "D3",
+          "reactionId": "sample|Control_6|g1|3"
+        },
+        {
+          "well": "D2",
+          "reactionId": "sample|Control_6|g2|1"
+        },
+        {
+          "well": "D1",
+          "reactionId": "sample|Control_6|g2|2"
+        },
+        {
+          "well": "E1",
+          "reactionId": "sample|Control_6|g2|3"
+        },
+        {
+          "well": "E2",
+          "reactionId": "sample|Treatment_1|g1|1"
+        },
+        {
+          "well": "E3",
+          "reactionId": "sample|Treatment_1|g1|2"
+        },
+        {
+          "well": "E4",
+          "reactionId": "sample|Treatment_1|g1|3"
+        },
+        {
+          "well": "E5",
+          "reactionId": "sample|Treatment_1|g2|1"
+        },
+        {
+          "well": "E6",
+          "reactionId": "sample|Treatment_1|g2|2"
+        },
+        {
+          "well": "E7",
+          "reactionId": "sample|Treatment_1|g2|3"
+        },
+        {
+          "well": "E8",
+          "reactionId": "sample|Treatment_2|g1|1"
+        },
+        {
+          "well": "E9",
+          "reactionId": "sample|Treatment_2|g1|2"
+        },
+        {
+          "well": "E10",
+          "reactionId": "sample|Treatment_2|g1|3"
+        },
+        {
+          "well": "E11",
+          "reactionId": "sample|Treatment_2|g2|1"
+        },
+        {
+          "well": "E12",
+          "reactionId": "sample|Treatment_2|g2|2"
+        },
+        {
+          "well": "F12",
+          "reactionId": "sample|Treatment_2|g2|3"
+        },
+        {
+          "well": "F11",
+          "reactionId": "sample|Treatment_3|g1|1"
+        },
+        {
+          "well": "F10",
+          "reactionId": "sample|Treatment_3|g1|2"
+        },
+        {
+          "well": "F9",
+          "reactionId": "sample|Treatment_3|g1|3"
+        },
+        {
+          "well": "F8",
+          "reactionId": "sample|Treatment_3|g2|1"
+        },
+        {
+          "well": "F7",
+          "reactionId": "sample|Treatment_3|g2|2"
+        },
+        {
+          "well": "F6",
+          "reactionId": "sample|Treatment_3|g2|3"
+        },
+        {
+          "well": "F5",
+          "reactionId": "sample|Treatment_4|g1|1"
+        },
+        {
+          "well": "F4",
+          "reactionId": "sample|Treatment_4|g1|2"
+        },
+        {
+          "well": "F3",
+          "reactionId": "sample|Treatment_4|g1|3"
+        },
+        {
+          "well": "F2",
+          "reactionId": "sample|Treatment_4|g2|1"
+        },
+        {
+          "well": "F1",
+          "reactionId": "sample|Treatment_4|g2|2"
+        },
+        {
+          "well": "G1",
+          "reactionId": "sample|Treatment_4|g2|3"
+        },
+        {
+          "well": "G2",
+          "reactionId": "sample|Treatment_5|g1|1"
+        },
+        {
+          "well": "G3",
+          "reactionId": "sample|Treatment_5|g1|2"
+        },
+        {
+          "well": "G4",
+          "reactionId": "sample|Treatment_5|g1|3"
+        },
+        {
+          "well": "G5",
+          "reactionId": "sample|Treatment_5|g2|1"
+        },
+        {
+          "well": "G6",
+          "reactionId": "sample|Treatment_5|g2|2"
+        },
+        {
+          "well": "G7",
+          "reactionId": "sample|Treatment_5|g2|3"
+        },
+        {
+          "well": "G8",
+          "reactionId": "sample|Treatment_6|g1|1"
+        },
+        {
+          "well": "G9",
+          "reactionId": "sample|Treatment_6|g1|2"
+        },
+        {
+          "well": "G10",
+          "reactionId": "sample|Treatment_6|g1|3"
+        },
+        {
+          "well": "G11",
+          "reactionId": "sample|Treatment_6|g2|1"
+        },
+        {
+          "well": "G12",
+          "reactionId": "sample|Treatment_6|g2|2"
+        },
+        {
+          "well": "H11",
+          "reactionId": "sample|Treatment_6|g2|3"
+        },
+        {
+          "well": "H10",
+          "reactionId": "noRT|Control_1|g1|1|plate1"
+        },
+        {
+          "well": "H9",
+          "reactionId": "noRT|Control_1|g1|2|plate1"
+        },
+        {
+          "well": "H8",
+          "reactionId": "noRT|Control_1|g2|1|plate1"
+        },
+        {
+          "well": "H7",
+          "reactionId": "noRT|Control_1|g2|2|plate1"
+        },
+        {
+          "well": "H6",
+          "reactionId": "noRT|Control_1|g3|1|plate1"
+        },
+        {
+          "well": "H5",
+          "reactionId": "noRT|Control_1|g3|2|plate1"
+        },
+        {
+          "well": "H4",
+          "reactionId": "ntc|NTC|g1|1|plate1"
+        },
+        {
+          "well": "H3",
+          "reactionId": "ntc|NTC|g2|1|plate1"
+        },
+        {
+          "well": "H2",
+          "reactionId": "ntc|NTC|g3|1|plate1"
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "wells": [
+        {
+          "well": "A2",
+          "reactionId": "sample|Control_6|g3|1"
+        },
+        {
+          "well": "A3",
+          "reactionId": "sample|Control_6|g3|2"
+        },
+        {
+          "well": "A4",
+          "reactionId": "sample|Control_6|g3|3"
+        },
+        {
+          "well": "A5",
+          "reactionId": "sample|Treatment_1|g3|1"
+        },
+        {
+          "well": "A6",
+          "reactionId": "sample|Treatment_1|g3|2"
+        },
+        {
+          "well": "A7",
+          "reactionId": "sample|Treatment_1|g3|3"
+        },
+        {
+          "well": "A8",
+          "reactionId": "sample|Treatment_2|g3|1"
+        },
+        {
+          "well": "A9",
+          "reactionId": "sample|Treatment_2|g3|2"
+        },
+        {
+          "well": "A10",
+          "reactionId": "sample|Treatment_2|g3|3"
+        },
+        {
+          "well": "A11",
+          "reactionId": "sample|Treatment_3|g3|1"
+        },
+        {
+          "well": "A12",
+          "reactionId": "sample|Treatment_3|g3|2"
+        },
+        {
+          "well": "B12",
+          "reactionId": "sample|Treatment_3|g3|3"
+        },
+        {
+          "well": "B11",
+          "reactionId": "sample|Treatment_4|g3|1"
+        },
+        {
+          "well": "B10",
+          "reactionId": "sample|Treatment_4|g3|2"
+        },
+        {
+          "well": "B9",
+          "reactionId": "sample|Treatment_4|g3|3"
+        },
+        {
+          "well": "B8",
+          "reactionId": "sample|Treatment_5|g3|1"
+        },
+        {
+          "well": "B7",
+          "reactionId": "sample|Treatment_5|g3|2"
+        },
+        {
+          "well": "B6",
+          "reactionId": "sample|Treatment_5|g3|3"
+        },
+        {
+          "well": "B5",
+          "reactionId": "sample|Treatment_6|g3|1"
+        },
+        {
+          "well": "B4",
+          "reactionId": "sample|Treatment_6|g3|2"
+        },
+        {
+          "well": "B3",
+          "reactionId": "sample|Treatment_6|g3|3"
+        },
+        {
+          "well": "B2",
+          "reactionId": "calibrator|Control_1|g1|2"
+        },
+        {
+          "well": "B1",
+          "reactionId": "calibrator|Control_1|g2|2"
+        },
+        {
+          "well": "C1",
+          "reactionId": "calibrator|Control_1|g3|2"
+        },
+        {
+          "well": "C2",
+          "reactionId": "ntc|NTC|g1|1|plate2"
+        },
+        {
+          "well": "C3",
+          "reactionId": "ntc|NTC|g2|1|plate2"
+        },
+        {
+          "well": "C4",
+          "reactionId": "ntc|NTC|g3|1|plate2"
+        }
+      ]
+    }
+  ]
+}
