@@ -8,11 +8,9 @@
 
 它采用 Safari 的主屏幕安装方式，不提供 IPA、TestFlight 或 App Store 安装包。普通使用者无需开发者账号、电脑或额外付费。ZIP 是资源与教程的备份/部署包，安装入口是下面的 HTTPS 网页。
 
-**软件入口：** [打开 qPCR Plate Planner](https://qpcr-plate-planner-ipad-v212.kumalovetutu.chatgpt.site/qPCR%20Plate%20Planner.html)
+**当前访问提示（2026-10-12）：** 原托管软件入口返回 403，正在迁移到 GitHub Pages。发布分支已准备，待仓库所有者[启用 Pages](GITHUB-PAGES-SETUP.md)并核验后公布正式软件入口。也可按[免费部署教程](APPLE-FREE-DEPLOY.md)使用自己的 HTTPS 网站。下文“软件入口”指部署成功后的软件实验输入页面。
 
-**在线教程：** [打开 Apple 安装教程](https://qpcr-plate-planner-ipad-v212.kumalovetutu.chatgpt.site/qPCR%20Plate%20Planner%20Apple%20%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B.html)
-
-网站公开访问，无需 GitHub 或 ChatGPT 账号。工具的样品、配方、排板和执行记录在本机计算、保存；网页托管服务会接收访问软件资源的网络请求。
+工具的样品、配方、排板和执行记录在本机计算、保存；网页托管服务会接收访问软件资源的网络请求。
 
 ## 2. 安装前准备
 
