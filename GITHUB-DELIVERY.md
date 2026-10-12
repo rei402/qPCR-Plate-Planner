@@ -8,6 +8,7 @@
 - Android：下载 `releases/qPCR Plate Planner v2.1.2.apk`，支持 Android 8.0 及以上。
 - iPad：`releases/qPCR Plate Planner v2.1.2 iPad.zip` 包含 HTTPS 静态托管文件和安装指引；这是网页/PWA 交付包，不是 iOS 原生安装包。
 - iPhone / iPad 最新交付：`releases/qPCR Plate Planner v2.1.2 Apple.zip`（2026-10-12），包含冻结资源、可打印 HTML 教程及详细 Markdown 教程；Safari 主屏幕 App 安装步骤见 `APPLE-INSTALL-GUIDE.md`。
+- Apple 独立部署包：`releases/qPCR Plate Planner v2.1.2 Apple Deploy.zip`，包含 MIT 许可证和使用本网站相对入口的安装指南；免费 GitHub Pages 部署步骤见 `APPLE-FREE-DEPLOY.md`。
 - 现有公开网页：https://qpcr-plate-planner-ipad-v212.kumalovetutu.chatgpt.site/qPCR%20Plate%20Planner.html
 - 静态部署文件：`ipad-site/dist/`。其中 `index.html` 仅负责托管首页跳转，软件入口仍为 `qPCR Plate Planner.html`。
 
