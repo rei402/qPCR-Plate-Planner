@@ -10,8 +10,8 @@ qPCR Plate Planner 将样品、目标基因、内参和对照设置转化为可�
 
 ## 开始使用
 
-- **公开网页版正在迁移至 GitHub Pages**：原托管地址返回 403，当前已准备 `gh-pages` 发布分支，待仓库所有者[启用 Pages](../GITHUB-PAGES-SETUP.md)后核验正式入口。
-- [iPhone / iPad 主屏幕 App 详细安装教程](../APPLE-INSTALL-GUIDE.md) · [Apple 交付包（2026-10-12）](https://github.com/rei402/qPCR-Plate-Planner/raw/refs/heads/main/releases/qPCR%20Plate%20Planner%20v2.1.2%20Apple.zip)
+- [打开公开网页版](https://rei402.github.io/qPCR-Plate-Planner/qPCR%20Plate%20Planner.html) · 已迁移至 GitHub Pages，无需登录。
+- [iPhone / iPad 主屏幕 App 详细安装教程](../APPLE-INSTALL-GUIDE.md) · [在线安装指南](https://rei402.github.io/qPCR-Plate-Planner/Apple%20%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97.html) · [Apple 交付包（2026-10-12，保留原发布资料）](https://github.com/rei402/qPCR-Plate-Planner/raw/refs/heads/main/releases/qPCR%20Plate%20Planner%20v2.1.2%20Apple.zip)
 - [Apple 免费部署教程](../APPLE-FREE-DEPLOY.md) · [独立部署包（含 MIT 许可证）](https://github.com/rei402/qPCR-Plate-Planner/raw/refs/heads/main/releases/qPCR%20Plate%20Planner%20v2.1.2%20Apple%20Deploy.zip)：支持自己的 GitHub Pages 或 HTTPS 静态网站。
 - [下载 Windows 离线包](https://github.com/rei402/qPCR-Plate-Planner/raw/refs/heads/main/releases/qPCR%20Plate%20Planner%20v2.1.2.zip)：完整解压后双击 `qPCR Plate Planner.exe`。
 - [下载 Android APK](https://github.com/rei402/qPCR-Plate-Planner/raw/refs/heads/main/releases/qPCR%20Plate%20Planner%20v2.1.2.apk)：支持 Android 8.0 及以上，首次启动即可离线使用。

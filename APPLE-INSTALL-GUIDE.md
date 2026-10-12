@@ -8,7 +8,11 @@
 
 它采用 Safari 的主屏幕安装方式，不提供 IPA、TestFlight 或 App Store 安装包。普通使用者无需开发者账号、电脑或额外付费。ZIP 是资源与教程的备份/部署包，安装入口是下面的 HTTPS 网页。
 
-**当前访问提示（2026-10-12）：** 原托管软件入口返回 403，正在迁移到 GitHub Pages。发布分支已准备，待仓库所有者[启用 Pages](GITHUB-PAGES-SETUP.md)并核验后公布正式软件入口。也可按[免费部署教程](APPLE-FREE-DEPLOY.md)使用自己的 HTTPS 网站。下文“软件入口”指部署成功后的软件实验输入页面。
+**软件入口：** [打开 qPCR Plate Planner](https://rei402.github.io/qPCR-Plate-Planner/qPCR%20Plate%20Planner.html)
+
+**在线安装指南：** [在本网站安装主屏幕 App](https://rei402.github.io/qPCR-Plate-Planner/Apple%20%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97.html)
+
+**访问更新（2026-10-12）：** 原托管入口返回 403，现已迁移到 GitHub Pages，并实际核验软件入口 HTTP 200。网站无需登录即可访问。原下载归档中的旧网址已失效，请使用上面的新入口；已有实验先从仍能打开旧工具的设备导出 JSON，再在新网址导入。也可按[免费部署教程](APPLE-FREE-DEPLOY.md)使用自己的 HTTPS 网站。
 
 工具的样品、配方、排板和执行记录在本机计算、保存；网页托管服务会接收访问软件资源的网络请求。
 
