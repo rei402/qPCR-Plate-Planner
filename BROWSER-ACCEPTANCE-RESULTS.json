@@ -1,0 +1,31 @@
+{
+  "tool": "qPCR Plate Planner",
+  "version": "2.2.0",
+  "environment": "Codex in-app browser, real browser DOM and rendered application iframe",
+  "url": "https://rei402.github.io/qPCR-Plate-Planner/v2.2.0-final/browser-acceptance.html",
+  "runtimeCommit": "7bd1aa36f7302ffc789caad769ff596d4315e64c",
+  "completedAt": "2026-10-19T03:31:28.849Z",
+  "status": "passed",
+  "passed": 6,
+  "total": 6,
+  "subsequentVerification": "After this six-scene run, long independent control groups (NTC24/PC23/NoRT13 with ordinary technical replicate 3) were added and verified in the dedicated core regression suite across 96/384 and project/plate scopes. That extension is not represented as an additional browser scenario here.",
+  "method": "Run button executes browser-acceptance.js against visible form controls, real DOM events, SVG wells, guarded navigator, Tablet and JSON file input. No jsdom or internal QPCRTest state. Results read from the rendered page after execution.",
+  "scenarios": [
+    { "id": 1, "result": "pass", "name": "96孔标准四样品、四assay、三重复", "observed": "48个反应，一板；A/H内参正确，标准样品列组宽3。" },
+    { "id": 2, "result": "pass", "name": "96孔六样品紧凑填充", "observed": "54个反应留在一板，剩余2样品紧凑填充，导航采用真实孔位。" },
+    { "id": 3, "result": "pass", "name": "384孔十八样品及Tablet批次", "observed": "162个反应，一块384板；Q1–Q4可见，Tablet精确匹配当前批次，暂停熄灭。" },
+    { "id": 4, "result": "pass", "name": "独立量程、最后一批与死体积", "observed": "引物0.4µL/孔，2µL上限：5+5+2孔，2+2+0.8µL；每来源死体积只加一次。" },
+    { "id": 5, "result": "pass", "name": "QC显式启用和已有对照恢复", "observed": "默认QC关闭；NTC跟随3重复产生9孔，PC独立控制，保存恢复保留两种对照。" },
+    { "id": 6, "result": "pass", "name": "修改失效、重新生成与JSON实际孔位恢复", "observed": "Sample/Target顺序、重复数、Reserved修改后旧清单失效；JSON实际孔位和当前批次一致。" }
+  ],
+  "batchEvidence": [
+    { "wells": ["B1", "B2", "B3", "B4", "B5"], "perWell_uL": 0.4, "aspirateVolume_uL": 2, "batchIndex": 1, "batchCount": 3 },
+    { "wells": ["B6", "B7", "B8", "B9", "B10"], "perWell_uL": 0.4, "aspirateVolume_uL": 2, "batchIndex": 2, "batchCount": 3 },
+    { "wells": ["B11", "B12"], "perWell_uL": 0.4, "aspirateVolume_uL": 0.8, "batchIndex": 3, "batchCount": 3 }
+  ],
+  "limitations": [
+    "JSON round trip captures the Save button Blob and supplies a real File to the browser file input; the operating system file picker and physical download location were not tested.",
+    "Touch gestures, iPhone/iPad Safari installation, fullscreen permission, wake lock, physical plate alignment and actual dispensing were not tested on hardware.",
+    "A4 portrait/landscape and print content were checked by DOM integration tests. System print dialogs, PDF pagination and a physical printer were not verified."
+  ]
+}

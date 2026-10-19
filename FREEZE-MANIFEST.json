@@ -1,8 +1,8 @@
 {
   "tool": "qPCR Plate Planner",
-  "version": "2.1.2",
-  "status": "frozen",
-  "frozenAt": "2026-10-02T11:55:36.598Z",
+  "version": "2.2.0",
+  "status": "incremental-upgrade",
+  "frozenAt": "2026-10-19T05:40:10.567Z",
   "entry": "qPCR Plate Planner.html",
   "windowsEntry": "qPCR Plate Planner.exe",
   "tests": [
@@ -29,18 +29,26 @@
     {
       "suite": "review-tests.js",
       "summary": "9/9 review regression tests passed"
+    },
+    {
+      "suite": "single-channel-tests.js",
+      "summary": "64/64 single-channel core tests passed"
+    },
+    {
+      "suite": "single-channel-ui-tests.js",
+      "summary": "19/19 single-channel DOM integration tests passed (jsdom; no real browser rendering)"
     }
   ],
   "files": [
     {
       "path": "qPCR Plate Planner.exe",
       "size": 34304,
-      "sha256": "332701ba5ad9d5115c42e76cac7b92718aefa78a77fe211399bcb96734518c7a"
+      "sha256": "44fac8b1ebd8df062e8495c1656b8a47521e84dab31fa87aae13aa8b4ddfba3a"
     },
     {
       "path": "launcher.cs",
       "size": 1586,
-      "sha256": "cdb102c300999d6cdc172be0a967b3e01e42be5c5ca790c5e941a3f3c6175481"
+      "sha256": "2a29b8c67ba22238b98363b24c8804f0330530e9749c002a40d2fa046a02fffa"
     },
     {
       "path": "build-launcher.js",
@@ -64,8 +72,8 @@
     },
     {
       "path": "qPCR Plate Planner.html",
-      "size": 22139,
-      "sha256": "6091f5fc1d0ec3bcadc9adbb948899d8986b1d15fe79418202d30c1e8768134b"
+      "size": 22525,
+      "sha256": "8d25bbd5854fd0e040d04a56a1a1620197f279a2555a763e7d3cbab65c56f55f"
     },
     {
       "path": "styles.css",
@@ -84,13 +92,13 @@
     },
     {
       "path": "core.js",
-      "size": 64318,
-      "sha256": "202370aa0a982433b5922019b210bb03a1580b6875a95889f0ab863413f670da"
+      "size": 67213,
+      "sha256": "30413a78092efb0e90652895e255ae00e2d6e2b6a1ce71fb5ea89068980fcb92"
     },
     {
       "path": "lab-layout.js",
-      "size": 16510,
-      "sha256": "991e936ea38c0bdf960be361dce24c34e5632edc5a966c3f064ac58a19bbdfd2"
+      "size": 18119,
+      "sha256": "1f7fa8226d71b00460ecb548c5ab1547e31a3e539ccf68d0c34df87480b417c9"
     },
     {
       "path": "plate-colors.js",
@@ -114,38 +122,38 @@
     },
     {
       "path": "tablet-guide.js",
-      "size": 32709,
-      "sha256": "35949c2356d1104d6a51b19658a9850c6af4a384e4d2fb75725287bae5ab08d4"
+      "size": 35329,
+      "sha256": "a129c37ad040eeb3f5988014d71a7754db41c7dc6653f6a37f82b71f21aeb76a"
     },
     {
       "path": "execution.js",
-      "size": 2410,
-      "sha256": "a248addc447e70d85d4b8701056a908135aabd779b6b111598c07cea3f9a4ce4"
+      "size": 2753,
+      "sha256": "074e35cd483e8e5aeeb5fb40e3801d480283ad456115deec0c4fe2cd71d37faa"
     },
     {
       "path": "project-io.js",
-      "size": 3423,
-      "sha256": "884ab47b5cbc71116ca70d9b57c232d5426a6c8b94546ccea220af8e4d482021"
+      "size": 3875,
+      "sha256": "7642581986ff2c8afb81768a54067fac904743b86cb30eedea07f6e58fd1ef42"
     },
     {
       "path": "form-controller.js",
-      "size": 23198,
-      "sha256": "4b2139f22915b083e5a2b270f8cf067ad235881ac48c334e813e802e3ff8c95e"
+      "size": 23693,
+      "sha256": "fbb9f43a9a581d422b1805fec62cb810e5e84b83f6f578b6bf87779cbf9de665"
     },
     {
       "path": "plate-renderer.js",
-      "size": 10144,
-      "sha256": "a4f85a593d0ac53a87a850bc946517b21207f7f707cd31d1b68a8b5f6dd6a087"
+      "size": 10258,
+      "sha256": "0997a1a5bf05e05b3c9a4d62c0de2da7ddd1886a594bafdb195dc9856a6cc000"
     },
     {
       "path": "print-controller.js",
-      "size": 7066,
-      "sha256": "841fd3ef1e3e54fede7504d52a4c5f1d562d513699b90f6d7429f21887a47990"
+      "size": 7515,
+      "sha256": "6727c3403dfbe6ec1974f76219eb6a17a5cbb76b61fd3e17540ed74c9e6b79af"
     },
     {
       "path": "app.js",
-      "size": 55451,
-      "sha256": "fd8632ee1fe69e395dd42626acd4174013459474d7d31e22459dc67384733b50"
+      "size": 58312,
+      "sha256": "364c24575cd3bc51626a8daa8b8448e15d7a654c73397a8ff1141cb52b9e950e"
     },
     {
       "path": "manifest.json",
@@ -154,33 +162,33 @@
     },
     {
       "path": "sw.js",
-      "size": 1389,
-      "sha256": "5035e3b15825a6bdc7d38f73e7cad38779a02aa23ca957a054309abad1e42cf4"
+      "size": 1718,
+      "sha256": "a444807972203fe2daac935b82d718f647ec1bb6fd7eee11982eb4a620effa72"
     },
     {
       "path": "README.md",
-      "size": 22550,
-      "sha256": "5ef670254ab63d884542b478bd06cb80d2973dcaeaf998d57049f1f1827bf5da"
+      "size": 23570,
+      "sha256": "1e23a069e4ba6abe9a1c01c3c86277f9839cc418e175673def03eafdb23f6c3e"
     },
     {
       "path": "CHANGELOG.md",
-      "size": 4838,
-      "sha256": "9410949c0a0f46c857b2b9b5c69acca041ccf9cc84c2dd3386844527f428a3de"
+      "size": 5923,
+      "sha256": "81151df93dc8e5f3d63099ef2b9f7696944c72195f11dd646a594bccb4883f99"
     },
     {
       "path": "VERSION.json",
-      "size": 252,
-      "sha256": "f288cc547e6247db00f8ec09b0677e4435fe76f8eca384ef67bf40482561bb03"
+      "size": 296,
+      "sha256": "148f7f2da64263be774f30903831d0df1e97a10a03a7e831ad92c28e3604a344"
     },
     {
       "path": "TEST-REPORT.md",
-      "size": 14161,
-      "sha256": "9d83534d74135618947f0109e7634970c7afc35546ed2c643b2cfbb57cce44ff"
+      "size": 20414,
+      "sha256": "2050c99eabe7552c592db7c0e306722b44b7cb1a237a54de3978ae9410698588"
     },
     {
       "path": "tests.html",
-      "size": 919,
-      "sha256": "df6fd383f10284595d22a6a14ff0504485ce136066ac06600432a07e5de18416"
+      "size": 966,
+      "sha256": "55a8a56f3fadcb1b8516a7f1c1c961c175fce57b8722bfe4fdfa75ca4e7e0be9"
     },
     {
       "path": "tests.js",
@@ -214,13 +222,13 @@
     },
     {
       "path": "package.json",
-      "size": 640,
-      "sha256": "5a94e86fe8950438341d484d9b2564c617c8554b6b82c4a71c5140349a81a5e2"
+      "size": 825,
+      "sha256": "40429970d56f55ac857ed8ff94e3d9d6b147ef455613bff2d09caefd97c9981b"
     },
     {
       "path": "package-lock.json",
       "size": 22967,
-      "sha256": "0647cf71eff596901b966f88f1bf3b1b4c31798befa9de500e42ac658d9ef652"
+      "sha256": "7a7ff3032813a989990d916b9d7d7898f50f0f35b59f738f77d039af33f20b6d"
     },
     {
       "path": "generate_icons.py",
@@ -229,8 +237,8 @@
     },
     {
       "path": "build-release.js",
-      "size": 4176,
-      "sha256": "1f75d8872249143d24967d12994172e4dab9a4e4544eae211e61e3d541e87b26"
+      "size": 4701,
+      "sha256": "63d0eaa1dd4ccf3373bfaf7a177cf20005b4c7a8614a3e061f1875f97feb7197"
     },
     {
       "path": "verify-release.js",
@@ -286,6 +294,61 @@
       "path": "examples/v2-project.json",
       "size": 31382,
       "sha256": "8d2ff1c11c013ab22c8de96452b6311ab556358a5ee0a46e08364c2b73fee447"
+    },
+    {
+      "path": "LICENSE",
+      "size": 1063,
+      "sha256": "67d658f0740183a2333ff084650a8c07f138354383a035b8c3bd7a70846f481f"
+    },
+    {
+      "path": "single-channel.js",
+      "size": 34380,
+      "sha256": "7b3373fa674fc569f966726aef17f2a8936bcad9322324e569e1d699195d49ea"
+    },
+    {
+      "path": "single-channel-ui.js",
+      "size": 26869,
+      "sha256": "19c6043e07bf58d72083a5722e1cf16b37cfe046a7e211b431b082ade07c0bff"
+    },
+    {
+      "path": "single-channel.css",
+      "size": 3462,
+      "sha256": "527199258d7755ee7b8affa3443f8f532372e35d9d6abf7135429d1c79f4370b"
+    },
+    {
+      "path": "single-channel-tests.js",
+      "size": 21417,
+      "sha256": "e7bc013d071a7fccb24ee024702fdd099cb1dc29028e020a3d76ab5e94571979"
+    },
+    {
+      "path": "single-channel-ui-tests.js",
+      "size": 11771,
+      "sha256": "c64ccc1c22ce478d8fa21f05868e6dd5f51aa70d62317977bc1fcd2be0dced4e"
+    },
+    {
+      "path": "browser-acceptance.html",
+      "size": 1416,
+      "sha256": "48d39312e714ec5905581f9065ad5cc61d0a647310d7212f6447f3a0849da9c5"
+    },
+    {
+      "path": "browser-acceptance.js",
+      "size": 10014,
+      "sha256": "ae36260764fbeaf5cfe66a3b106263983f00e1ead8f038645100317b57c4719f"
+    },
+    {
+      "path": "SINGLE-CHANNEL-GUIDE.md",
+      "size": 4680,
+      "sha256": "553f1dde8a36e18be04bd3a72afa55546b6c286de607ee1145ea4620d53b9b32"
+    },
+    {
+      "path": "SINGLE-CHANNEL-UPGRADE.md",
+      "size": 10300,
+      "sha256": "6c656dae6e58c406a1d0f1dada8d461f4d57e8127dc3afd0d5ff5b8472d4a012"
+    },
+    {
+      "path": "BROWSER-ACCEPTANCE-RESULTS.json",
+      "size": 3067,
+      "sha256": "745a2e67375b34d0e98565f23f791ce17ffebac9cba57064b93fd086e866b14c"
     }
   ]
 }

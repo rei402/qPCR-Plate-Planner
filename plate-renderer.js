@@ -30,7 +30,7 @@
     for (let r = 0; r < rows; r++) { const row = String.fromCharCode(65 + r), el = make('text', { x: cfg.marginX - 19, y: cfg.marginY + (r + 0.5) * (cfg.wellHeight + cfg.verticalGap) + 4, class: 'axis-label row-label', 'text-anchor': 'middle' }); el.textContent = row; header(el, 'row', row, `选择第 ${row} 行`); }
     const byWell = new Map(p.wells.map(r => [r.well, r])); let reserved;
     try { reserved = new Set(state.result?.reserved || Q.parseReserved(project.settings.reserved, type)); } catch (_) { reserved = new Set(); }
-    const step = !forPrint && state.result && state.tab === 'steps' ? Q.stepsFor(p, project)[state.step] : null, highlighted = new Set(step?.wells || []);
+    const step = !forPrint && state.result && state.tab === 'steps' ? Q.stepsFor(p, project)[state.step] : null, highlighted = new Set(project.settings.layoutMode==='singleChannelOptimized'&&!window.QPCRSingleChannelUI?.current?.canOperate() ? [] : step?.wells || []);
     for (const coord of Q.coordinates(type)) {
       const r = byWell.get(coord.well), isReserved = reserved.has(coord.well), box = View.wellGeometry(type, coord.r, coord.c);
       const desc = r ? `${r.placementKind ? ({standard:'标准样品区',compact:'剩余区 · 紧凑矩形',strip:'剩余区 · 水平条带',control:'对照区'}[r.placementKind] || '') + '；' : ''}${typeNames[r.type]}；${r.type === 'ntc' ? '' : 'Sample：' + r.sample + '，编号 ' + sampleCode(r.sample) + '；'}Target：${r.gene}，编号 ${geneCode(r.geneId)}；技术重复 ${r.replicate} / ${r.replicateTotal}` : isReserved ? '保留孔' : '空孔';

@@ -6,11 +6,21 @@
 
 qPCR Plate Planner 将样品、目标基因、内参和对照设置转化为可核对的 96 / 384 孔板布局，自动计算各 assay 的 Master Mix 与 Primer / Assay Mix，并提供逐步孔位高亮、可打印操作单和项目记录。中文界面支持 Windows、iPad 网页/PWA 和 Android APK，适合实验室学生与科研人员进行 singleplex qPCR / RT-qPCR 实验准备。
 
-**当前版本：v2.1.2 冻结版。** 核心排板与计算在本机完成，实验数据保存在本机或由用户导出的文件中；本工具不分析 Ct 值或扩增曲线。
+**最新版本：v2.2.0；v2.1.2 冻结版继续保留。** 核心排板与计算在本机完成，实验数据保存在本机或由用户导出的文件中；本工具不分析 Ct 值或扩增曲线。
+
+## v2.2.0 单通道移液优化
+
+- [打开最新版公开网页版](https://rei402.github.io/qPCR-Plate-Planner/v2.2.0-final/qPCR%20Plate%20Planner.html)：无需登录，iPhone / iPad 可用 Safari「分享 → 添加到主屏幕」。先联网完整加载并核对版本为 v2.2.0，再离线使用。
+- [下载 v2.2.0 完整便携包](https://github.com/rei402/qPCR-Plate-Planner/raw/refs/heads/main/releases/qPCR%20Plate%20Planner%20v2.2.0.zip) · [SHA256 校验值](../releases/qPCR%20Plate%20Planner%20v2.2.0.zip.sha256.txt)
+- [单通道操作教程](../SINGLE-CHANNEL-GUIDE.md) · [升级与验收报告](../SINGLE-CHANNEL-UPGRADE.md) · [测试报告](../TEST-REPORT.md)
+- 新模式提供引物 / 样品两阶段配制、来源管架、量程分批、三项确认后点亮和四类操作单；需要主动选择「单通道移液优化」。原模式与默认设置继续保留。
+- 自动测试 **312 / 312** 通过；真实浏览器六场景 **6 / 6** 通过。实体移动设备、孔板对齐和系统打印分页仍需复核。
+
+以下 v2.1.2 网页、Windows、Android APK 和 Apple 历史交付包继续保留，不覆盖为 v2.2.0。
 
 ## 开始使用
 
-- [打开公开网页版](https://rei402.github.io/qPCR-Plate-Planner/qPCR%20Plate%20Planner.html) · 已迁移至 GitHub Pages，无需登录。
+- [打开 v2.1.2 冻结版公开网页](https://rei402.github.io/qPCR-Plate-Planner/qPCR%20Plate%20Planner.html) · 已迁移至 GitHub Pages，无需登录。
 - [iPhone / iPad 主屏幕 App 详细安装教程](../APPLE-INSTALL-GUIDE.md) · [在线安装指南](https://rei402.github.io/qPCR-Plate-Planner/Apple%20%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97.html) · [Apple 交付包（2026-10-12，保留原发布资料）](https://github.com/rei402/qPCR-Plate-Planner/raw/refs/heads/main/releases/qPCR%20Plate%20Planner%20v2.1.2%20Apple.zip)
 - [Apple 免费部署教程](../APPLE-FREE-DEPLOY.md) · [独立部署包（含 MIT 许可证）](https://github.com/rei402/qPCR-Plate-Planner/raw/refs/heads/main/releases/qPCR%20Plate%20Planner%20v2.1.2%20Apple%20Deploy.zip)：支持自己的 GitHub Pages 或 HTTPS 静态网站。
 - [下载 Windows 离线包](https://github.com/rei402/qPCR-Plate-Planner/raw/refs/heads/main/releases/qPCR%20Plate%20Planner%20v2.1.2.zip)：完整解压后双击 `qPCR Plate Planner.exe`。

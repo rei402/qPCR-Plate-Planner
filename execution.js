@@ -5,8 +5,10 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function (Q) {
   'use strict';
   function fingerprint(project, result) {
+    if(windowSafeSingle(project)) return JSON.stringify({design:result.plates[0]?.singleChannelDesignKey,plates:result.plates.map(p=>({plate:p.number,assignment:p.singleChannelAssignmentKey,steps:Q.stepsFor(p,project).map(stepKey)}))});
     return JSON.stringify(result.plates.map(p => ({ number: p.number, wells: p.wells.map(r => [r.id, r.well]).sort((a, b) => a[0].localeCompare(b[0])), steps: Q.stepsFor(p, project).map(s => [s.kind, s.title, s.perWell, s.total, s.wells]) })));
   }
+  function windowSafeSingle(project) { return project.settings.layoutMode === 'singleChannelOptimized'; }
   function stepKey(step) { return JSON.stringify([step.kind, step.title, step.wells, step.perWell, step.total]); }
   function create(project, result, saved) {
     const layoutFingerprint = fingerprint(project, result), plates = {};

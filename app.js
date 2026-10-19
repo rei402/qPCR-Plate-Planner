@@ -6,11 +6,13 @@
   const Colors = window.QPCRPlateColors;
   const Exec = window.QPCRExecution;
   const IO = window.QPCRProjectIO;
+  const Single = window.QPCRSingleChannel;
   const $ = id => document.getElementById(id);
   const state = { project: null, result: null, plate: 0, step: 0, tab: 'mix', editorActive: false, selectedWells: new Set(), previewWells: new Set(), selectionAnchor: null, lastSelectedWell: null, hoverWells: new Set(), drag: null, dragFrame: 0, editHistory: { undo: [], redo: [] }, reservedDirty: false, selectedWell: '', presets: {}, checklist: Q.DEFAULT_CHECKLIST.map(g => [...g]), disabledChecklist: new Set(), premixSelectedIds: new Set(), premixWaste: null, premixExtra: null, componentCounter: 0, plateZoom: 1 };
   Object.assign(state, { sampleMetadata: Object.create(null), geneRecords: [], assaySelection: null, assayRecipes: Object.create(null), execution: null, dirty: false, draftTimer: 0, draftSaved: false });
   let capacityTimer = 0;
-  let draftStorage; try { draftStorage = IO.draftStore(localStorage); } catch (_) { draftStorage = IO.draftStore({ getItem() { return null; }, setItem() { throw new Error('storage disabled'); }, removeItem() {} }); }
+  function localStore() { return IO.deploymentStorage(localStorage, window.location); }
+  let draftStorage; try { draftStorage = IO.draftStore(localStore()); } catch (_) { draftStorage = IO.draftStore({ getItem() { return null; }, setItem() { throw new Error('storage disabled'); }, removeItem() {} }); }
   const roleNames = { mastermix: '通用 Mix', forward_primer: '正向引物', reverse_primer: '反向引物', probe: '探针', water: '水', template: '模板', other: '其他' };
   const typeNames = { sample: 'Sample', ntc: 'NTC', noRT: 'No-RT', positive: 'Positive control', calibrator: '跨板校准' };
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -19,21 +21,22 @@
   const { resolveGenes, renderSampleExtensions, renderAssayChoices, addOverrideRow, loadOverride, applyOverride, addRecipeRow, recipeFromForm, setRecipe, renderPremixOptions, renderRecipeSummary, updateSampleOptions, setControlsVisibility, readProject, setForm } = window.QPCRForms.create({ Q, state, $, IO, Colors, roleNames, esc, number, markStale: (...args) => markStale(...args), changed: (...args) => changed(...args), renderCapacity: (...args) => renderCapacity(...args), printOrientation: (...args) => printOrientation(...args), updateColorControls: (...args) => updateColorControls(...args), renderChecklistEditor: (...args) => renderChecklistEditor(...args), updatePrintPageStyle: (...args) => updatePrintPageStyle(...args), updateZoomControls: (...args) => updateZoomControls(...args), flash: (...args) => flash(...args) });
   const { buildPlateSvg, updateZoomControls, renderPlate, wellClick } = window.QPCRPlateRenderer.create({ Q, View, Sel, Colors, state, $, esc, typeNames, selectedPlate: (...args) => selectedPlate(...args), readProject: (...args) => readProject(...args), sampleCode: (...args) => sampleCode(...args), geneCode: (...args) => geneCode(...args), selectEditorItem: (...args) => selectEditorItem(...args), updateSelectionVisuals: (...args) => updateSelectionVisuals(...args), attachDragHandlers: (...args) => attachDragHandlers(...args) });
   const { printPage, scalePrintPreview, renderPrint, renderReagentPrint, reagentTable } = window.QPCRPrint.create({ Q, View, state, $, esc, buildPlateSvg: (...args) => buildPlateSvg(...args), selectedPlate: (...args) => selectedPlate(...args), updatePrintPageStyle: (...args) => updatePrintPageStyle(...args), printOrientation: (...args) => printOrientation(...args) });
+  const singleUI = window.QPCRSingleChannelUI.create({ Q, state, $, esc, changed, markStale, renderSteps, renderPlate, renderPrint, selectedPlate, completeStep, flash, readProject, renderAssayChoices, printOrientation, buildPlateSvg: (p,project,forPrint) => buildPlateSvg(p,forPrint), printSingle: kind => { $('printSheet').innerHTML=singleUI.printPages(state.result.plates,kind); window.addEventListener('afterprint',()=>renderPrint(),{once:true}); window.print(); } });
   function printOrientation() { return document.querySelector('input[name="printOrientation"]:checked')?.value || Q.NEW_PROJECT_DEFAULTS.printOrientation; }
   function updatePrintPageStyle() { $('dynamic-print-page-style').textContent = View.printPageRule(Number($('plateType').value), printOrientation()); }
 
   function flash(message, kind = 'info') { $('validationMessages').innerHTML = `<div class="message ${kind}">${esc(message)}</div>`; }
   function storePreferences() {
     try {
-      localStorage.setItem('qpcr-preferences-v1', JSON.stringify({ defaultsRevision: 1, paletteId: state.paletteId || Q.NEW_PROJECT_DEFAULTS.paletteId, plateType: $('plateType').value, replicates: $('replicates').value, wastePercent: $('wastePercent').value, minimumExtra: $('minimumExtra').value, minPipetteVolume: $('minPipetteVolume').value, pipette: $('pipette').value, layoutMode: $('layoutMode').value, referenceRowPreference:$('referenceRowPreference').value, allocationMode: $('allocationMode').value, printOrientation: printOrientation(), plateZoom: state.plateZoom, checklist: state.checklist, disabledChecklist: [...state.disabledChecklist] }));
+      localStore().setItem('qpcr-preferences-v1', JSON.stringify({ defaultsRevision: 1, paletteId: state.paletteId || Q.NEW_PROJECT_DEFAULTS.paletteId, plateType: $('plateType').value, replicates: $('replicates').value, wastePercent: $('wastePercent').value, minimumExtra: $('minimumExtra').value, minPipetteVolume: $('minPipetteVolume').value, pipette: $('pipette').value, layoutMode: $('layoutMode').value, referenceRowPreference:$('referenceRowPreference').value, allocationMode: $('allocationMode').value, printOrientation: printOrientation(), plateZoom: state.plateZoom, checklist: state.checklist, disabledChecklist: [...state.disabledChecklist] }));
     } catch (_) { /* 本地存储禁用时，核心功能仍可运行 */ }
   }
   function loadStorage() {
     try {
-      state.presets = JSON.parse(localStorage.getItem('qpcr-presets-v1') || '{}');
+      state.presets = JSON.parse(localStore().getItem('qpcr-presets-v1') || '{}');
       if (!state.presets || typeof state.presets !== 'object' || Array.isArray(state.presets)) state.presets = {};
       state.presets = Object.assign(Object.create(null),state.presets);
-      const pref = JSON.parse(localStorage.getItem('qpcr-preferences-v1') || '{}');
+      const pref = JSON.parse(localStore().getItem('qpcr-preferences-v1') || '{}');
       for (const key of ['plateType', 'replicates', 'wastePercent', 'minimumExtra', 'minPipetteVolume', 'pipette', 'referenceRowPreference', 'allocationMode']) if (pref[key] !== undefined && $(key)) $(key).value = pref[key];
       // Adopt revised defaults once; subsequently retain choices made with this profile.
       if (pref.defaultsRevision === 1) {
@@ -46,7 +49,7 @@
       if (Array.isArray(pref.disabledChecklist) && pref.disabledChecklist.every(x => typeof x === 'string')) state.disabledChecklist = new Set(pref.disabledChecklist);
     } catch (_) { state.presets = Object.create(null); }
   }
-  function savePresets() { try { localStorage.setItem('qpcr-presets-v1', JSON.stringify(state.presets)); } catch (_) { flash('浏览器无法保存本机预设；仍可导出项目 JSON。', 'warning'); } }
+  function savePresets() { try { localStore().setItem('qpcr-presets-v1', JSON.stringify(state.presets)); } catch (_) { flash('浏览器无法保存本机预设；仍可导出项目 JSON。', 'warning'); } }
 
   function snapshot() { return { ...Q.saveObject(state.project || readProject(), state.result, state.execution), generated: !!state.result, navigation: { plate: state.plate, step: state.step } }; }
   function status() { $('projectStatus').textContent = `${state.dirty ? '● 有未导出的修改' : '✓ 项目已导出或载入'}${state.draftSaved ? ' · 本机草稿已保存' : state.pendingDraft ? ' · 请先恢复或丢弃旧草稿以启用自动保存' : ' · 本机草稿尚未保存'}`; }
@@ -77,7 +80,7 @@
     $('reagentSummary').innerHTML = reagentTable(summary);
   }
   function rememberStep() { if (!state.result) return; Exec.cursor(state.execution, selectedPlate().number, Q.stepsFor(selectedPlate(), state.project)[state.step]); changed(); }
-  function completeStep() { if (!state.result) return; const steps = Q.stepsFor(selectedPlate(), state.project); Exec.complete(state.execution, selectedPlate().number, steps[state.step]); state.step = Math.min(state.step + 1, steps.length - 1); rememberStep(); renderSteps(); }
+  function completeStep() { if (!state.result) return; if(Single.isMode(state.project)){singleUI.completeCurrent();return;} const steps = Q.stepsFor(selectedPlate(), state.project); Exec.complete(state.execution, selectedPlate().number, steps[state.step]); state.step = Math.min(state.step + 1, steps.length - 1); rememberStep(); renderSteps(); }
   function importSamples(text) {
     const rows = IO.parseTable(text); $('samples').value = rows.map(r => r.sample).join('\n');
     let next = Math.max(-1, ...Object.values(state.sampleMetadata).map(m => m.colorIndex ?? 0)) + 1;
@@ -86,6 +89,7 @@
   }
 
   function markStale(reason = '输入发生变化，原排板和 Mix 已隐藏，避免使用过期结果。') {
+    singleUI.invalidate();
     window.QPCRTabletGuide?.close();
     $('tabletGuideButton').disabled = true;
     if (state.result) {
@@ -127,6 +131,7 @@
   function generate() {
     clearTimeout(capacityTimer); capacityTimer = 0;
     window.QPCRTabletGuide?.close();
+    singleUI.invalidate();
     const project = readProject(), result = Q.generate(project);
     if (!result.ok) { state.result = null; state.project = null; $('tabletGuideButton').disabled = true; $('plateHeading').textContent = '无法生成'; $('plateView').innerHTML = '<div class="empty-state error-text">请修改左侧错误后重新生成。</div>'; $('mixCards').replaceChildren(); $('stepContent').replaceChildren(); $('checksContent').replaceChildren(); $('legend').replaceChildren(); $('plateSwitcher').hidden = true; $('printSheet').replaceChildren(); $('printPreview').innerHTML = '<p class="muted">请修正错误后查看打印预览。</p>'; $('validationMessages').innerHTML = result.errors.map(e => `<div class="message error">${esc(e)}</div>`).join(''); if (state.editorActive) renderPlate(); return; }
     state.project = project; state.result = result; state.plate = 0; state.step = 0; state.selectedWell = ''; state.reservedDirty = false; $('layoutStaleNotice').hidden = true;
@@ -140,7 +145,7 @@
   function renderResults() {
     const p = selectedPlate();
     $('plateHeading').textContent = `Plate ${p.number} / ${state.result.plates.length} · ${state.project.plateType} 孔`;
-    $('capacity').innerHTML = `<strong>✓ 排板完成</strong><span>总计 ${state.result.expected.total} 孔，${state.result.plates.length} 块板。NTC ${state.result.expected.ntc}、No-RT ${state.result.expected.noRT}、阳性 ${state.result.expected.positive}、校准 ${state.result.expected.calibrator} 孔。当前板 ${p.wells.length} / ${p.capacity} 个可用孔；保留 ${state.result.reserved.length} 孔。</span><span>布局候选：${p.sequence === 'sample' ? '按样品' : '按基因'} · ${{ labPriorityHybrid:'实验室优先布局', saved:'保存的原始孔位', horizontal: '横向', vertical: '纵向', serpentine: '蛇形', block: '区块' }[p.layout]}；所有反应、对照和 Mix 数量一致。</span>${p.layoutMetadata ? labCapacity(state.result.plates.map(x=>x.layoutMetadata),state.result.plates.map(x=>x.wells.length),p.capacity) : ''}`;
+    $('capacity').innerHTML = `<strong>✓ 排板完成</strong><span>总计 ${state.result.expected.total} 孔，${state.result.plates.length} 块板。NTC ${state.result.expected.ntc}、No-RT ${state.result.expected.noRT}、阳性 ${state.result.expected.positive}、校准 ${state.result.expected.calibrator} 孔。当前板 ${p.wells.length} / ${p.capacity} 个可用孔；保留 ${state.result.reserved.length} 孔。</span><span>布局候选：${p.sequence === 'sample' ? '按样品' : '按基因'} · ${{ singleChannelOptimized: String.fromCharCode(21333,36890,36947,31227,28082,20248,21270), labPriorityHybrid:'实验室优先布局', saved:'保存的原始孔位', horizontal: '横向', vertical: '纵向', serpentine: '蛇形', block: '区块' }[p.layout]}；所有反应、对照和 Mix 数量一致。</span>${p.layoutMetadata ? labCapacity(state.result.plates.map(x=>x.layoutMetadata),state.result.plates.map(x=>x.wells.length),p.capacity) : ''}`;
     const switcher = $('plateSwitcher'); switcher.hidden = state.result.plates.length < 2;
     switcher.innerHTML = state.result.plates.map((x, i) => `<button type="button" data-plate="${i}" class="${i === state.plate ? 'active' : ''}">Plate ${x.number} · ${x.wells.length} 孔</button>`).join('');
     switcher.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { state.plate = Number(b.dataset.plate); state.step = Exec.resumeIndex(state.execution, selectedPlate().number, Q.stepsFor(selectedPlate(), state.project)); state.selectedWell = ''; renderResults(); }));
@@ -304,6 +309,10 @@
     if (state.result) { renderPlate(); renderLegend(); renderPrint(); } storePreferences(); changed();
   }
   function renderMixes() {
+    $('singleChannelResult').hidden=!Single.isMode(state.project);
+    $('mixPanel').querySelector('h2').textContent=Single.isMode(state.project)?'两阶段来源混合液配制':'Master Mix 配制';
+    $('mixPanel').querySelector('p.small').textContent=Single.isMode(state.project)?'按引物工作液和样品混合液的真实来源管配制；每管汇总全部孔板需求。':'每个 assay 单独配制。下列体积按当前孔板计算；跨板时请逐板核对。';
+    if(Single.isMode(state.project)){singleUI.renderPlan();return;}
     const p = selectedPlate(), s = state.project.settings;
     $('mixCards').innerHTML = p.mixes.map(m => `<article class="mix-card"><div class="mix-card-head"><h3>${esc(m.gene.name)} ${m.gene.type === 'reference' ? '<span class="tag">内参</span>' : ''}</h3><span>${m.required} 孔 → 配制 ${m.prepare} 反应</span></div><p class="small">max(ceil(${m.required} × (1 + ${s.wastePercent}%)), ${m.required} + ${s.minimumExtra}) = <strong>${m.prepare}</strong>　·　孔位：${esc(m.wellRange)}</p>${m.premix ? `<div class="premix-block"><h4>${esc(m.gene.name)} ${esc(m.premix.name)} · 独立配制</h4><p class="small">最终 Mix 需要 ${m.premix.required} 反应份；独立 Mix 配制 ${m.premix.prepare} 反应份（含自身余量）。每份 ${Q.volume(m.premix.perReaction)} µL，配制总量 ${Q.volume(m.premix.total)} µL；转移 ${Q.volume(m.premix.transferTotal)} µL 到最终 Mix。</p><table><thead><tr><th>独立 Mix 组分</th><th>每份</th><th>配制总量</th></tr></thead><tbody>${m.premix.components.map(c => `<tr><td>${esc(c.displayName)}</td><td>${Q.volume(c.perReaction)} µL</td><td><strong>${Q.volume(c.total)} µL</strong></td></tr>`).join('')}</tbody></table></div><h4>Final Master Mix</h4>` : ''}<table><thead><tr><th>组分</th><th>每反应</th><th>本次配制</th></tr></thead><tbody>${m.components.map(c => `<tr><td>${esc(c.displayName)}</td><td>${Q.volume(c.perReaction)} µL</td><td><strong>${Q.volume(c.total)} µL</strong></td></tr>`).join('')}</tbody><tfoot><tr><th>Master Mix 合计</th><th>${Q.volume(m.totals.mix)} µL</th><th>${Q.volume(m.total)} µL</th></tr></tfoot></table><p class="mix-foot">每孔分液 <strong>${Q.volume(m.totals.mix)} µL Mix</strong>，之后加入 <strong>${Q.volume(m.totals.template)} µL Template / 对照材料</strong>。</p></article>`).join('');
   }
@@ -319,6 +328,11 @@
     $('reopenStep').disabled = !done;
     $('nextStep').disabled = done && state.step === steps.length - 1;
     $('nextStep').textContent = state.step === steps.length - 1 ? '确认完成本板' : '完成并进入下一步';
+    if(Single.isMode(state.project)){
+      $('stepContent').innerHTML=`<div class="step-card"><div class="step-kind">${x.phase==='primer'?'阶段 1：引物工作液':x.phase==='sampleMix'?'阶段 2：Sample Master Mix':'本板完成检查'}</div><h3>${esc(x.title)}</h3>${x.wells.length?`<p>来源管 <strong>${esc(x.tubeId)}</strong> · 管架 ${esc(x.sourceRackPosition)} · 每孔 ${Q.volume(x.perWell)} µL</p><p>本板本来源 ${x.totalWellCount} 孔；本批 ${x.wells.length} 孔；${x.capacityVerified?'吸液':'导航'}批次 ${x.navigationBatchIndex}/${x.navigationBatchCount}；吸液体积 ${x.aspirateVolume==null?'未量程校验':Q.volume(x.aspirateVolume)+' µL'}</p><p>本批真实孔位：${x.wells.join(' → ')}</p>`:''}<p>${esc(x.note)}</p><button type="button" class="primary" id="scStepNavigator">打开加样导航并核对来源</button></div>`;
+      $('scStepNavigator').onclick=()=>singleUI.open(); $('nextStep').disabled=!singleUI.canOperate()||done; $('previousStep').disabled=true; $('reopenStep').disabled=true;
+      $('nextStep').textContent='确认本批已完成，进入下一批';
+    }
     if (state.tab === 'steps') renderPlate();
   }
   function renderChecks() {
@@ -363,7 +377,9 @@
       if (!Number.isInteger(index) || !state.result.plates[index]) { flash('请选择有效孔板。', 'error'); return; }
       if (state.editorActive) toggleEditor();
       if (index !== state.plate) { state.plate = index; state.step = 0; renderResults(); }
-      const opened = window.QPCRTabletGuide?.open({ project: state.project, result: state.result, plateIndex: state.plate, stepIndex: state.step, onPlateChange: next => { state.plate = next; state.step = Exec.resumeIndex(state.execution, selectedPlate().number, Q.stepsFor(selectedPlate(), state.project)); renderResults(); return state.step; }, onStepComplete: (step, index) => { Exec.complete(state.execution, state.result.plates[index].number, step); changed(); }, isStepComplete: (step, index) => Exec.isComplete(state.execution, state.result.plates[index].number, step), onStepReopen: (step, index) => { Exec.reopen(state.execution, state.result.plates[index].number, step); changed(); renderSteps(); }, onStepChange: next => { state.step = next; rememberStep(); renderSteps(); } });
+      if(Single.isMode(state.project)&&!singleUI.canOperate())return flash('请先在加样导航模式确认当前来源管、阶段与 A1。','warning');
+      const opened = window.QPCRTabletGuide?.open({ project: state.project, result: state.result, plateIndex: state.plate, stepIndex: state.step, onPlateChange: next => { state.plate = next; state.step = Exec.resumeIndex(state.execution, selectedPlate().number, Q.stepsFor(selectedPlate(), state.project)); renderResults(); return state.step; }, onStepComplete: (step, index) => { Exec.complete(state.execution, state.result.plates[index].number, step); changed(); }, isStepComplete: (step, index) => Exec.isComplete(state.execution, state.result.plates[index].number, step), onStepReopen: (step, index) => { Exec.reopen(state.execution, state.result.plates[index].number, step); changed(); renderSteps(); }, onStepChange: next => { state.step = next; rememberStep(); if(Single.isMode(state.project))singleUI.syncBatch();else renderSteps(); }, onClose: () => { if(Single.isMode(state.project))singleUI.syncBatch(); } });
+      if(opened && Single.isMode(state.project))singleUI.syncBatch();
       if (!opened) flash('无法打开平板加样辅助：请检查排板和加样步骤。', 'error');
     });
     $('editorRegenerate').addEventListener('click', generate);

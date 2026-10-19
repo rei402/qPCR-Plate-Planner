@@ -41,5 +41,10 @@
     const rows = [['试剂','实际用量 µL','配制量 µL','余量 µL'], ...summary.ingredients.map(x => [x.name,x.reactionUse,x.prepared,x.extra]), [], ['Plate','assay','预混名称','配制 µL','转移 µL'], ...summary.transfers.map(x => [x.plate,x.assay,x.name,x.prepared,x.transfer])];
     return '\ufeff' + rows.map(row => row.map(cell).join(',')).join('\r\n') + '\r\n';
   }
-  return { parseTable, draftStore, summaryCSV };
+  function deploymentStorage(storage, location) {
+    const path = location?.pathname || '';
+    const prefix = /^https?:$/.test(location?.protocol || '') && /\/v\d+\.\d+\.\d+(?:-[^/]*)?\//.test(path) ? 'qpcr-site:' + path.slice(0,path.lastIndexOf('/')+1) + ':' : '';
+    return { getItem:key=>storage.getItem(prefix+key), setItem:(key,value)=>storage.setItem(prefix+key,value), removeItem:key=>storage.removeItem(prefix+key) };
+  }
+  return { parseTable, draftStore, summaryCSV, deploymentStorage };
 });

@@ -1,6 +1,6 @@
-# 冻结版测试报告
+# 交付版测试报告
 
-版本：2.1.2；执行时间：2026-10-02T11:55:36.598Z
+版本：2.2.0；执行时间：2026-10-19T05:40:10.567Z
 
 ## tests.js
 
@@ -279,4 +279,103 @@ PASS REVIEW 启动程序搬到中文空格路径后可定位入口；缺文件�
 9/9 review regression tests passed
 ```
 
-DOM 测试使用 jsdom，检查真实 DOM 事件与项目状态。未进行真实浏览器视觉、打印分页截图或实体孔板校准验证。设备相关操作见 README 的人工复核说明。
+## single-channel-tests.js
+
+64/64 single-channel core tests passed
+
+```text
+PASS SC A 两阶段覆盖每个实际孔一次，未逐孔重复加入模板/SYBR
+PASS SC A 每个来源管组分守恒，理论用量总和等于总反应体积
+PASS SC A 现有 Primer Mix 选择及其独立过量规则只应用一次
+PASS SC A 不同 assay 样品侧体积或试剂不一致时阻止共享管
+PASS SC A 预配工作液允许直接填写体积，无需伪造浓度
+PASS SC A SYBR 倍数只校验和警告，不改变反应化学组成
+PASS SC A 不完整浓度输入不猜测，非法/超体积输入报错
+PASS SC B 标准96四样品四assay三重复，一板48孔
+PASS SC B 合法重复数 1 保持完整、连续和保存恢复
+PASS SC B 合法重复数 2 保持完整、连续和保存恢复
+PASS SC B 合法重复数 3 保持完整、连续和保存恢复
+PASS SC B 合法重复数 4 保持完整、连续和保存恢复
+PASS SC B 合法重复数 5 保持完整、连续和保存恢复
+PASS SC B 合法重复数 6 保持完整、连续和保存恢复
+PASS SC B 合法重复数 7 保持完整、连续和保存恢复
+PASS SC B 合法重复数 8 保持完整、连续和保存恢复
+PASS SC B 合法重复数 9 保持完整、连续和保存恢复
+PASS SC B 合法重复数 10 保持完整、连续和保存恢复
+PASS SC B 合法重复数 11 保持完整、连续和保存恢复
+PASS SC B 合法重复数 12 保持完整、连续和保存恢复
+PASS SC B 合法重复数 13 保持完整、连续和保存恢复
+PASS SC B 合法重复数 14 保持完整、连续和保存恢复
+PASS SC B 合法重复数 15 保持完整、连续和保存恢复
+PASS SC B 合法重复数 16 保持完整、连续和保存恢复
+PASS SC B 合法重复数 17 保持完整、连续和保存恢复
+PASS SC B 合法重复数 18 保持完整、连续和保存恢复
+PASS SC B 合法重复数 19 保持完整、连续和保存恢复
+PASS SC B 合法重复数 20 保持完整、连续和保存恢复
+PASS SC B 合法重复数 21 保持完整、连续和保存恢复
+PASS SC B 合法重复数 22 保持完整、连续和保存恢复
+PASS SC B 合法重复数 23 保持完整、连续和保存恢复
+PASS SC B 合法重复数 24 保持完整、连续和保存恢复
+PASS SC B 2与3重复标准列宽和样品顺序来自项目
+PASS SC B 96内参顶部A或底部H，多个内参仅主内参固定
+PASS SC B 没有内参不保留空行，首目标从A开始
+PASS SC B 六样品54孔紧凑填充保留在同一板
+PASS SC B Reserved造成标准区受阻时跳过并紧凑填充
+PASS SC B 超过8个assay、稀疏矩阵与多板不遗漏
+PASS SC C Q1/Q2/Q3/Q4 全坐标转换
+PASS SC C 384十八样品四分区标准16加紧凑2，一板162孔
+PASS SC C 384上下边缘对应A/I与H/P，同Target仍共用引物来源
+PASS SC C 384每一批不跨分区且所有步骤覆盖真实孔位
+PASS SC D 按实际量程分批，最后一批剩余体积正确且不重不漏
+PASS SC D 未知量程仅导航，吸液次数/体积/吸头数为null
+PASS SC D 每批最大孔数和每孔换头策略分别限制批次
+PASS SC D 小体积只警告、不改变配方；每孔超过上限阻止执行
+PASS SC D 全实验每个物理来源只计一次过量和死体积
+PASS SC D 输入非法配置、非法管架维度、负体积不崩溃
+PASS SC E 来源管修改稳定同步所有批次，标签/容量/位置错误明确阻止
+PASS SC E 两个管架独立，容量不足报错
+PASS SC E 按Plate完成引物→样品→检查，不跨板交错
+PASS SC E 来源按真实Target/Sample顺序编号，不受孔位遍历排序影响
+PASS SC E 公开计划入口拒绝重复、遗漏、错样品/重复编号、保留孔和错坐标
+PASS SC E 配方、顺序、来源管与最终孔位变化后旧步骤全部失效
+PASS SC F QC默认关闭，显式NTC/PC/NoRT材料与普通样品来源严格分开
+PASS SC F NTC Follow/Custom和逐板QC/校准保存后不丢失
+PASS SC F 长重复13/24与96/384逐板QC、NoRT、校准共同守恒
+PASS SC F 普通三重复与独立NTC24/PC23/NoRT13兼容，长对照不跨分区
+PASS SC F 显示设置、配色和完成状态不会改变孔位或设计
+PASS SC F 多板进度指纹不逐板复制整个实验，1800孔保持低于2MiB
+PASS SC F JSON实际孔位和新设置恢复后步骤逐孔一致，CSV含最终Well
+PASS SC F 旧项目未切换模式，旧mix与布局结果保持
+PASS SC F 同域版本子目录隔离草稿/偏好，文件模式与旧入口仍使用原存储
+PASS SC F Service Worker只清理自身作用域，旧版清理前缀不匹配新缓存
+64/64 single-channel core tests passed
+```
+
+## single-channel-ui-tests.js
+
+19/19 single-channel DOM integration tests passed (jsdom; no real browser rendering)
+
+```text
+PASS SC UI 独立新模式、默认旧模式与QC开关保持
+PASS SC UI 导航三项确认前熄灭，不能越过当前批次
+PASS SC UI 显式完成后下一批重新确认，双击不跳批
+PASS SC UI 暂停、熄灭、重新检查均撤销确认并熄灭
+PASS SC UI 退出清理运行状态，重新进入不自动点亮
+PASS SC UI 六样品54孔紧凑区明确标记，来源按真实配方
+PASS SC UI 修改顺序、重复、保留孔及配方使旧计划失效并关闭导航
+PASS SC UI 管架标签/位置编辑后需重算，最新来源同步每批
+PASS SC UI 不同移液器设置独立保存，缺失参数时不显示精确吸液量
+PASS SC UI 384十八样品162孔，分区标签和真实批次高亮一致
+PASS SC UI Tablet锁定后仍需三项批次确认，只亮当前5孔
+PASS SC UI Tablet下一批撤销确认，连点不跳批；暂停和熄灭立即灭灯
+PASS SC UI Tablet退出后主导航同步最新批次并保持熄灭
+PASS SC UI Tablet重校准重新确认，设计改变后退出且不保留旧孔位
+PASS SC UI 程序状态意外变更也触发过期计划拦截
+PASS SC UI QC单独开启NTC，PC不自动开启，来源材料可核对
+PASS SC UI JSON恢复当前设置/实际孔位/批次一致，重开后不自动确认
+PASS SC UI 浓度计算仅预览，明确应用后重算且样品水名称不导致误报
+PASS SC UI 四类打印都来自最终孔位，横纵96/384和清单管架可用
+19/19 single-channel DOM integration tests passed (jsdom; no real browser rendering)
+```
+
+DOM 测试使用 jsdom。真实浏览器六场景的独立执行记录见 BROWSER-ACCEPTANCE-RESULTS.json 和 SINGLE-CHANNEL-UPGRADE.md。触屏、全屏、系统打印分页与实体孔板校准仍须设备复核。

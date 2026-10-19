@@ -4,6 +4,7 @@
   const { Q, View, state, $, esc, buildPlateSvg, selectedPlate, updatePrintPageStyle, printOrientation } = ctx;
 
   function printPage(plate) {
+    if(state.project.settings.layoutMode==='singleChannelOptimized') return window.QPCRSingleChannelUI.current.printPages([plate],'layout',true);
     const project = state.project, spec = View.printLayout(project.plateType, printOrientation());
     const svg = buildPlateSvg(plate, true).outerHTML;
     const warnings = state.result.warnings.filter(w => !/^Plate \d+ /.test(w) || w.startsWith('Plate ' + plate.number + ' '));
@@ -23,7 +24,7 @@
     updatePrintPageStyle();
     if (!state.result) return;
     const plates = scope === 'all' ? state.result.plates : [selectedPlate()];
-    $('printSheet').innerHTML = plates.map(printPage).join('');
+    $('printSheet').innerHTML = state.project.settings.layoutMode==='singleChannelOptimized' ? window.QPCRSingleChannelUI.current.printPages(plates,'all') : plates.map(printPage).join('');
     $('printPreview').innerHTML = `<div class="preview-holder">${printPage(selectedPlate())}</div>`;
     requestAnimationFrame(scalePrintPreview);
   }
@@ -36,7 +37,7 @@
     $('printSheet').innerHTML = pages.join('');
   }
   function reagentTable(summary) {
-    return `<table class="data-table"><thead><tr><th>试剂</th><th>实际用量 µL</th><th>配制量 µL</th><th>余量 µL</th></tr></thead><tbody>${summary.ingredients.map(r => `<tr><td>${esc(r.name)}</td><td>${Q.volume(r.reactionUse)}</td><td>${Q.volume(r.prepared)}</td><td>${Q.volume(r.extra)}</td></tr>`).join('')}</tbody></table><p class="small">模板用量按实际孔数计算，不额外预配。预混组分只计一次；下列转移量用于操作复核。</p>${summary.transfers.map(r => `<p class="small">Plate ${r.plate} · ${esc(r.assay)} · ${esc(r.name)}：配制 ${Q.volume(r.prepared)} µL，转移 ${Q.volume(r.transfer)} µL</p>`).join('')}`;
+    return `<table class="data-table"><thead><tr><th>试剂</th><th>实际用量 µL</th><th>配制量 µL</th><th>余量 µL</th></tr></thead><tbody>${summary.ingredients.map(r => `<tr><td>${esc(r.name)}</td><td>${Q.volume(r.reactionUse)}</td><td>${Q.volume(r.prepared)}</td><td>${Q.volume(r.extra)}</td></tr>`).join('')}</tbody></table><p class="small">${state.project.settings.layoutMode==='singleChannelOptimized'?'按真实来源管计算，模板已进入各自 Sample Master Mix；每管余量和死体积各计一次。':'模板用量按实际孔数计算，不额外预配。预混组分只计一次；下列转移量用于操作复核。'}</p>${summary.transfers.map(r => `<p class="small">Plate ${r.plate} · ${esc(r.assay)} · ${esc(r.name)}：配制 ${Q.volume(r.prepared)} µL，转移 ${Q.volume(r.transfer)} µL</p>`).join('')}`;
   }
   return { printPage, scalePrintPreview, renderPrint, renderReagentPrint, reagentTable };
   } };

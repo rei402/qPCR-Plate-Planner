@@ -37,8 +37,9 @@
     select.value=refs.length===1 ? refs[0].id : refs.some(g=>g.id===previous) ? previous : '';
     select.disabled=refs.length<2; state.primaryReferenceGeneId=select.value;
     $('primaryReferenceInfo').textContent=refs.length===0 ? '未设置内参；全部 assay 按普通顺序排布，不预留内参行。' : refs.length===1 ? '唯一内参自动作为主内参。' : '必须选择主内参；其余内参按 assay 顺序作为普通行。';
-    $('labLayoutFields').hidden=$('layoutMode').value!=='labPriorityHybrid';
-    $('allocationMode').disabled=$('layoutMode').value==='labPriorityHybrid';
+    $('labLayoutFields').hidden=!['labPriorityHybrid','singleChannelOptimized'].includes($('layoutMode').value);
+    $('allocationMode').disabled=['labPriorityHybrid','singleChannelOptimized'].includes($('layoutMode').value);
+    window.QPCRSingleChannelUI?.current?.showConfig();
     $('allocationMode').title=$('layoutMode').value==='labPriorityHybrid' ? '实验室优先布局按标准区与剩余空间依次顺序填充。' : '';
   }
   function renderAssayChoices() {
@@ -141,11 +142,13 @@
       assayRecipes: Object.fromEntries(Object.entries(state.assayRecipes).filter(([id]) => genes.some(g => g.id === id))),
       controls: { qcControlsEnabled: $('qcControlsEnabled').checked, ntc: $('ntcEnabled').checked, ntcReplicateMode: ntcFollow ? 'followTechnical' : 'custom', ntcCustomReplicates: ntcCustom, ntcReplicates: ntcFollow ? 'same' : ntcCustom, noRT: $('noRTMode').value, noRTSamples: [...$('noRTSamples').selectedOptions].map(x => x.value), positive: $('positiveEnabled').checked, positiveName: $('positiveName').value.trim(), calibratorSample: $('calibratorSample').value, scope: $('controlScope').value, noRTReplicates: number('noRTReplicates'), positiveReplicates: number('positiveReplicates') },
       recipe: recipeFromForm(),
-      settings: { wastePercent: number('wastePercent'), minimumExtra: number('minimumExtra'), minPipetteVolume: number('minPipetteVolume'), pipette: $('pipette').value, pipettePitch: $('pipettePitch').value, layoutMode: $('layoutMode').value, referenceRowPreference: $('referenceRowPreference').value, primaryReferenceGeneId: $('primaryReferenceGene').value, allocationMode: $('allocationMode').value, printOrientation: printOrientation(), display: { plateZoom: state.plateZoom, colorBy: state.colorBy || 'target', paletteId: state.paletteId || Q.NEW_PROJECT_DEFAULTS.paletteId }, reserved: $('reservedWells').value, checklist: state.checklist.map(g => [...g]), disabledChecklist: [...state.disabledChecklist] }
+      settings: { ...(state.singleChannelSettings ? {singleChannel: JSON.parse(JSON.stringify(state.singleChannelSettings))} : {}), wastePercent: number('wastePercent'), minimumExtra: number('minimumExtra'), minPipetteVolume: number('minPipetteVolume'), pipette: $('pipette').value, pipettePitch: $('pipettePitch').value, layoutMode: $('layoutMode').value, referenceRowPreference: $('referenceRowPreference').value, primaryReferenceGeneId: $('primaryReferenceGene').value, allocationMode: $('allocationMode').value, printOrientation: printOrientation(), display: { plateZoom: state.plateZoom, colorBy: state.colorBy || 'target', paletteId: state.paletteId || Q.NEW_PROJECT_DEFAULTS.paletteId }, reserved: $('reservedWells').value, checklist: state.checklist.map(g => [...g]), disabledChecklist: [...state.disabledChecklist] }
     };
   }
   function setForm(project) {
     project = Q.normalizeProject(project);
+    state.singleChannelSettings = project.settings.singleChannel ? JSON.parse(JSON.stringify(project.settings.singleChannel)) : undefined;
+    window.QPCRSingleChannelUI?.current?.invalidate();
     state.sampleMetadata = Object.assign(Object.create(null), JSON.parse(JSON.stringify(project.sampleMetadata)));
     project.samples.forEach((sample, i) => { state.sampleMetadata[sample] ||= { id: 'sample-' + i, colorIndex: i, group: '', biologicalReplicate: '' }; });
     state.geneRecords = project.genes.map((g, i) => ({ ...g, colorIndex: g.colorIndex ?? i }));
@@ -193,6 +196,7 @@
     for (const option of $('noRTSamples').options) option.selected = (project.controls.noRTSamples || []).includes(option.value);
     $('calibratorSample').value = project.controls.calibratorSample || '';
     renderSampleExtensions(); renderAssayChoices(); setControlsVisibility(); renderChecklistEditor(); renderCapacity(); updatePrintPageStyle(); updateZoomControls();
+    window.QPCRSingleChannelUI?.current?.loadSettings();
   }
   return { resolveGenes, renderSampleExtensions, renderAssayChoices, addOverrideRow, loadOverride, applyOverride, addRecipeRow, recipeFromForm, setRecipe, renderPremixOptions, renderRecipeSummary, updateSampleOptions, setControlsVisibility, readProject, setForm };
   } };

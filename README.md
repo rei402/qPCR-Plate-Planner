@@ -1,4 +1,13 @@
-# qPCR Plate Planner · v2.1.2 冻结版
+# qPCR Plate Planner · v2.2.0 单通道增量升级
+
+v2.1.2 冻结包保留在 `releases/`，原有模式、三个默认选项和历史文件格式继续兼容。v2.2.0 新增独立的「单通道移液优化」，须由操作者主动选择。
+
+- [单通道操作教程](SINGLE-CHANNEL-GUIDE.md)：两液体配方、独立移液器、来源管架、分批导航与四类打印。
+- [升级与验收报告](SINGLE-CHANNEL-UPGRADE.md)：实现规则、测试证据、真实浏览器验收和设备验证限制。
+- `browser-acceptance.html` 可在同一静态网站上运行六个浏览器验收场景；请在单独浏览器配置或无痕窗口中使用合成测试数据。
+- 新网页入口：[v2.2.0](https://rei402.github.io/qPCR-Plate-Planner/v2.2.0-final/qPCR%20Plate%20Planner.html)。iPhone/iPad 使用 Safari 打开，再选择「分享 → 添加到主屏幕」；安装前核对页面显示 v2.2.0。首次完整联网加载后可离线使用。
+
+旧版 Windows / Android / Apple 历史安装包仍为 v2.1.2；本轮不覆盖这些包。
 
 **qPCR 孔板设计、Mix 计算与加样助手**。这是一个完全静态的中文网页工具，面向 singleplex qPCR / RT-qPCR 的实验准备。它帮助规划 96 / 384 孔板、分别计算各 assay 的 Master Mix、逐步高亮加样孔，并生成 A4 横向或纵向操作单。它不分析 Ct 或扩增曲线。
 

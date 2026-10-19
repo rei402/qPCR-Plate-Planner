@@ -15,7 +15,7 @@
 
   class TabletGuide {
     constructor(options) {
-      this.project = options.project; this.result = options.result; this.plateIndex = options.plateIndex || 0; this.onPlateChange = options.onPlateChange || (() => {}); this.onStepChange = options.onStepChange || (() => {});
+      this.project = options.project; this.result = options.result; this.plateIndex = options.plateIndex || 0; this.onPlateChange = options.onPlateChange || (() => {}); this.onStepChange = options.onStepChange || (() => {}); this.onClose = options.onClose || (() => {});
       this.onStepComplete = options.onStepComplete || (() => {}); this.isStepComplete = options.isStepComplete || (() => false); this.onStepReopen = options.onStepReopen || (() => {});
       this.type = Number(this.project.plateType); this.steps = this.validatedSteps(this.plateIndex);
       this.stepIndex = G.nextStepIndex(options.stepIndex || 0, 0, this.steps.length);
@@ -66,13 +66,18 @@
     }
     bind() {
       const click = (id, fn) => this.listen(this.el(id), 'click', fn);
+      if(this.project.settings.layoutMode==='singleChannelOptimized'){
+        const checks=document.createElement('div');checks.className='tg-source-confirmations';checks.id='tgSourceConfirmations';
+        checks.innerHTML=['来源管标签与位置已核对','当前阶段与体积已核对','孔板编号、方向与 A1 已核对'].map((label,i)=>`<label><input type="checkbox" id="tgSourceConfirm${i}">${label}</label>`).join('');this.el('tgRunControls').prepend(checks);
+        checks.querySelectorAll('input').forEach(box=>this.listen(box,'change',()=>this.render()));
+      }
       click('tgExit', () => close()); click('tgFullscreen', () => this.toggleFullscreen());
       click('tgDismissIntro', () => { this.onboardDismissed = true; this.writeStorage('qpcr-tablet-onboarded-v1', true); this.el('tgOnboard').hidden = true; });
       click('tgUseProfile', () => this.useProfile()); click('tgFreshCalibration', () => this.reset());
       click('tgReset', () => this.reset()); click('tgLock', () => this.lock()); click('tgRecalibrate', () => this.recalibrate()); click('tgSaveProfile', () => this.saveProfile());
       click('tgPrevious', () => this.navigate(-1)); click('tgNext', () => this.navigate(1));
       const reopen = document.createElement('button'); reopen.id = 'tgReopen'; reopen.type = 'button'; reopen.textContent = '将当前步骤标为待执行'; this.el('tgRunControls').append(reopen);
-      click('tgReopen', () => { if (this.phase === 'run' && !this.needsReview) { this.onStepReopen(this.steps[this.stepIndex], this.plateIndex); this.render(); } });
+      click('tgReopen', () => { if (this.phase === 'run' && !this.needsReview) { this.onStepReopen(this.steps[this.stepIndex], this.plateIndex); this.resetBatchConfirmation(); this.render(); } });
       click('tgPause', () => this.togglePause()); click('tgBlackout', () => this.toggleBlackout());
       this.listen(this.el('tgPlateSelect'), 'change', event => this.switchPlate(Number(event.target.value)));
       this.listen(this.el('tgCalibrationDisplay'), 'change', event => { this.calibrationDisplay = event.target.value; this.updateLights(); });
@@ -111,7 +116,7 @@
       this.el('tgWakeStatus').textContent = this.wakeStatus;
       this.el('tgLockLabel').textContent = this.needsReview ? '⚠ 校准需要重新确认' : this.paused ? '⏸ 加样辅助已暂停' : this.blackout ? '● 孔板已熄灭' : '🔒 孔板位置已锁定';
       this.el('tgPause').textContent = this.paused ? '继续' : '暂停'; this.el('tgBlackout').textContent = this.blackout ? '恢复点亮' : '熄灭孔板';
-      const canNavigate = !calibration && !this.needsReview && !this.paused && !this.blackout;
+      const canNavigate = !calibration && !this.needsReview && !this.paused && !this.blackout && this.batchConfirmed();
       this.el('tgPrevious').disabled = !canNavigate || this.stepIndex === 0; this.el('tgNext').disabled = !canNavigate || this.stepIndex >= this.steps.length - 1 && this.isStepComplete(this.steps[this.stepIndex], this.plateIndex);
       this.el('tgNext').textContent = this.stepIndex === this.steps.length - 1 ? '确认完成本板' : '完成本步并继续 →';
       this.el('tgReopen').disabled = !canNavigate || !this.isStepComplete(this.steps[this.stepIndex], this.plateIndex);
@@ -137,11 +142,22 @@
       this.el('tgStepWells').textContent = step.wells.length ? `目标孔位：${step.range}` : '当前无点亮孔位';
       this.el('tgStepRange').textContent = step.wells.length ? `亮起 ${step.wells.length} 个孔` : '全部孔位熄灭';
       this.el('tgStepNote').textContent = step.note || '';
+      if(this.project.settings.layoutMode==='singleChannelOptimized'&&step.wells.length){
+        this.el('tgStepVolume').textContent=`${step.phase==='primer'?'阶段 1 / 2':'阶段 2 / 2'} · 来源管 ${step.tubeId} · 管架 ${step.sourceRackPosition} · 每孔 ${Q.volume(step.perWell)} µL`;
+        this.el('tgStepWells').textContent='本批真实孔位：'+step.wells.join(' → ');
+        this.el('tgStepRange').textContent=`${step.region} · 本板本来源 ${step.totalWellCount} 孔 · 本批 ${step.wells.length} 孔 · ${step.capacityVerified?'吸液':'导航'} ${step.navigationBatchIndex}/${step.navigationBatchCount} 批 · 吸液体积 ${step.aspirateVolume==null?'未量程校验':Q.volume(step.aspirateVolume)+' µL'}`;
+      }
     }
+    batchConfirmed(){
+      if(this.project.settings.layoutMode!=='singleChannelOptimized')return true;
+      try{for(const p of this.result.plates)Q.stepsFor(p,this.project);}catch(_){this.needsReview=true;this.paused=true;this.blackout=true;this.notice='操作清单已失效，请退出并重新生成。';return false;}
+      return [0,1,2].every(i=>this.el('tgSourceConfirm'+i)?.checked);
+    }
+    resetBatchConfirmation(){if(this.project.settings.layoutMode==='singleChannelOptimized')for(const i of [0,1,2]){const box=this.el('tgSourceConfirm'+i);if(box)box.checked=false;}}
     updateLights() {
       if (!this.active) return;
       const calibration = this.phase === 'calibration';
-      const lit = !calibration && !this.needsReview && !this.paused && !this.blackout ? G.highlightWells(this.steps[this.stepIndex], this.type) : new Set();
+      const lit = !calibration && !this.needsReview && !this.paused && !this.blackout && this.batchConfirmed() ? G.highlightWells(this.steps[this.stepIndex], this.type) : new Set();
       for (const { group, point } of this.wellElements.values()) {
         group.classList.toggle('is-lit', lit.has(point.well));
         group.classList.toggle('is-visible', calibration && (this.calibrationDisplay === 'all' || point.corner || this.calibrationDisplay === 'edges' && point.edge));
@@ -208,7 +224,7 @@
       if (this.el('tgRemember').checked) this.saveProfile();
       this.requestWakeLock(); this.render();
     }
-    recalibrate() { this.clearPointers(); this.phase = 'calibration'; this.locked = false; this.needsReview = false; this.paused = true; this.blackout = true; this.releaseWakeLock(); this.render(); }
+    recalibrate() { this.clearPointers(); this.resetBatchConfirmation(); this.phase = 'calibration'; this.locked = false; this.needsReview = false; this.paused = true; this.blackout = true; this.releaseWakeLock(); this.render(); }
     useProfile() {
       if (this.phase !== 'calibration' || !this.profile || this.profile.plateType !== this.type) return;
       this.setTransform(this.profile.transform); this.render();
@@ -223,24 +239,26 @@
     }
     switchPlate(index) {
       if (!Number.isInteger(index) || index < 0 || index >= this.result.plates.length || index === this.plateIndex) return;
+      if(this.project.settings.layoutMode==='singleChannelOptimized' && (index!==this.plateIndex+1 || this.steps.some(s=>!this.isStepComplete(s,this.plateIndex)))){this.notice='请先按顺序完成当前孔板全部批次与完成检查，再进入下一板。';this.el('tgPlateSelect').value=String(this.plateIndex);this.render();return;}
       let steps; try { steps = this.validatedSteps(index); } catch (_) { this.notice = '此孔板加样步骤校验失败，不能点亮孔位。'; this.paused = true; this.blackout = true; this.releaseWakeLock(); this.el('tgPlateSelect').value = String(this.plateIndex); this.render(); return; }
-      this.clearPointers(); this.releaseWakeLock(); this.plateIndex = index; this.steps = steps; this.stepIndex = 0;
+      this.clearPointers(); this.resetBatchConfirmation(); this.releaseWakeLock(); this.plateIndex = index; this.steps = steps; this.stepIndex = 0;
       this.phase = 'calibration'; this.locked = false; this.needsReview = false; this.paused = true; this.blackout = true; this.notice = ''; this.transform = G.defaultTransform(this.type, this.stageSize());
       const resume = this.onPlateChange(index); if (Number.isInteger(resume)) this.stepIndex = G.nextStepIndex(resume, 0, this.steps.length); this.render();
     }
     navigate(delta) {
+      if(!this.batchConfirmed())return;
       if (this.phase !== 'run' || this.needsReview || this.paused || this.blackout || Date.now() - this.lastNavigationAt < 300) return;
       const next = G.nextStepIndex(this.stepIndex, delta, this.steps.length);
       if (delta > 0) this.onStepComplete(this.steps[this.stepIndex], this.plateIndex);
-      this.lastNavigationAt = Date.now(); this.stepIndex = next; this.onStepChange(next, this.plateIndex); this.render();
+      this.lastNavigationAt = Date.now(); this.stepIndex = next; this.resetBatchConfirmation(); this.onStepChange(next, this.plateIndex); this.render();
     }
     togglePause() {
       if (this.phase !== 'run' || this.needsReview) return;
-      this.paused = !this.paused; if (this.paused) this.releaseWakeLock(); else if (!this.blackout) this.requestWakeLock(); this.render();
+      this.paused = !this.paused; this.resetBatchConfirmation(); if (this.paused) this.releaseWakeLock(); else if (!this.blackout) this.requestWakeLock(); this.render();
     }
     toggleBlackout() {
       if (this.phase !== 'run' || this.needsReview) return;
-      this.blackout = !this.blackout; if (this.blackout) this.releaseWakeLock(); else if (!this.paused) this.requestWakeLock(); this.render();
+      this.blackout = !this.blackout; this.resetBatchConfirmation(); if (this.blackout) this.releaseWakeLock(); else if (!this.paused) this.requestWakeLock(); this.render();
     }
     changeDisplay(key, value) {
       if (key === 'highlightColor' && G.COLORS[value]) this.display.highlightColor = value;
@@ -289,6 +307,7 @@
       if (this.orientationLocked) { try { screen.orientation?.unlock?.(); } catch (_) { /* 不影响退出 */ } this.orientationLocked = false; }
       try { if (document.fullscreenElement === this.root) await document.exitFullscreen(); } catch (_) { /* 仍需退出辅助界面 */ }
       this.root.remove(); document.body.style.overflow = this.previousOverflow; this.lastFocus?.focus?.();
+      this.onClose();
     }
   }
   function open(options) {

@@ -1,12 +1,12 @@
 (function (root, factory) {
-  const api = factory(typeof module === 'object' && module.exports ? require('./lab-layout.js') : root.QPCRLabLayout);
+  const api = factory(typeof module === 'object' && module.exports ? require('./lab-layout.js') : root.QPCRLabLayout, typeof module === 'object' && module.exports ? require('./single-channel.js') : root.QPCRSingleChannel);
   if (typeof module === 'object' && module.exports) module.exports = api;
   root.QPCR = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function (Lab) {
+})(typeof globalThis !== 'undefined' ? globalThis : this, function (Lab, Single) {
   'use strict';
 
   const VERSION = 1;
-  const APP_VERSION = '2.1.2';
+  const APP_VERSION = '2.2.0';
   const LAYOUT_VERSION = 3;
   const NEW_PROJECT_DEFAULTS = Object.freeze({ layoutMode: Lab.MODE, printOrientation: 'portrait', paletteId: 'vividScience' });
   const ROWS = { 96: 8, 384: 16 };
@@ -215,7 +215,7 @@
     return override ? { ...project, recipe: override.recipe, reactionVolume: Number(override.reactionVolume ?? project.reactionVolume), assayRecipes: {} } : project;
   }
 
-  function validate(project) {
+  function validate(project, suppressTransferWarnings = false) {
     const errors = [], warnings = [];
     if (!project || typeof project !== 'object') return { errors: ['项目数据为空。'], warnings };
     try { project = normalizeProject(project); } catch (error) { return { errors: [error.message], warnings }; }
@@ -245,7 +245,7 @@
       if (Number.isFinite(totals.total) && Math.abs(totals.total - Number(project.reactionVolume)) > 0.00001) errors.push('反应体系各组分之和为 ' + volume(totals.total) + ' µL，但设置的总反应体积为 ' + volume(Number(project.reactionVolume)) + ' µL。请检查配方。');
       if (totals.mix <= 0) errors.push('Master Mix 分液体积必须大于 0 µL。');
       const threshold = Number(settings.minPipetteVolume);
-      if (Number.isFinite(threshold) && totals.template < threshold) warnings.push('逐孔 Template 加样 ' + volume(totals.template) + ' µL 低于可靠移液阈值 ' + volume(threshold) + ' µL。建议稀释工作液或调整体系。');
+      if (!Single.isMode(project) && !suppressTransferWarnings && Number.isFinite(threshold) && totals.template < threshold) warnings.push('逐孔 Template 加样 ' + volume(totals.template) + ' µL 低于可靠移液阈值 ' + volume(threshold) + ' µL。建议稀释工作液或调整体系。');
       const premix = assayPremix(project.recipe), selected = new Set(premix.enabled && Array.isArray(premix.componentIds) ? premix.componentIds : []);
       if (premix.enabled) {
         const ids = comps.map(componentId);
@@ -261,16 +261,16 @@
         if (premix.wastePercent != null && (!Number.isFinite(Number(premix.wastePercent)) || Number(premix.wastePercent) < 0 || Number(premix.wastePercent) > 1000)) errors.push('独立 Mix 的损耗比例必须在 0–1000% 之间。');
         if (premix.minimumExtraReactions != null && (!Number.isInteger(Number(premix.minimumExtraReactions)) || Number(premix.minimumExtraReactions) < 0)) errors.push('独立 Mix 的额外反应数必须是非负整数。');
       }
-      for (const [index, c] of comps.entries()) if (c.role !== 'template' && !selected.has(componentId(c, index)) && Number(c.volumePerReaction) > 0 && Number(c.volumePerReaction) < threshold) warnings.push(c.name + ' 单反应体积 ' + volume(Number(c.volumePerReaction)) + ' µL 低于阈值 ' + volume(threshold) + ' µL；此组分进入批量 Master Mix，请核对配制总量，必要时使用 Primer Mix 或稀释工作液。');
+      for (const [index, c] of comps.entries()) if (!Single.isMode(project) && !suppressTransferWarnings && c.role !== 'template' && !selected.has(componentId(c, index)) && Number(c.volumePerReaction) > 0 && Number(c.volumePerReaction) < threshold) warnings.push(c.name + ' 单反应体积 ' + volume(Number(c.volumePerReaction)) + ' µL 低于阈值 ' + volume(threshold) + ' µL；此组分进入批量 Master Mix，请核对配制总量，必要时使用 Primer Mix 或稀释工作液。');
     }
     if (!Number.isFinite(Number(settings.wastePercent)) || Number(settings.wastePercent) < 0 || Number(settings.wastePercent) > 1000) errors.push('损耗比例必须在 0–1000% 之间。');
     if (!Number.isInteger(Number(settings.minimumExtra)) || Number(settings.minimumExtra) < 0) errors.push('最少额外反应数必须是非负整数。');
     if (!Number.isFinite(Number(settings.minPipetteVolume)) || Number(settings.minPipetteVolume) <= 0) errors.push('最小可靠移液体积必须大于 0 µL。');
-    if (!['optimized', 'gene', 'sample', Lab.MODE].includes(settings.layoutMode)) errors.push('排板模式无效。');
+    if (!['optimized', 'gene', 'sample', Lab.MODE, Single.MODE].includes(settings.layoutMode)) errors.push('排板模式无效。');
     if (!['top','bottom'].includes(settings.referenceRowPreference)) errors.push('主内参固定位置必须是顶部或底部。');
-    if (settings.layoutMode === Lab.MODE) {
+    if ([Lab.MODE, Single.MODE].includes(settings.layoutMode)) {
       if (genes.filter(g => g.type === 'reference').length > 1 && !genes.some(g => g.type === 'reference' && g.id === settings.primaryReferenceGeneId)) errors.push('多个内参时，请明确选择主内参。');
-      if (Number(project.replicates) > 12) errors.push('实验室优先布局每个区域只有 12 列；技术重复超过 12 请使用其他布局。');
+      if (settings.layoutMode === Lab.MODE && Number(project.replicates) > 12) errors.push('实验室优先布局每个区域只有 12 列；技术重复超过 12 请使用其他布局。');
     }
     if (!['sequential', 'balanced'].includes(settings.allocationMode)) errors.push('分板模式无效。');
     if (settings.printOrientation !== undefined && !['landscape', 'portrait'].includes(settings.printOrientation)) errors.push('打印方向只能是 A4 横向或纵向。');
@@ -289,7 +289,7 @@
     if (samples.length > 500 || genes.length > 100 || baseCounts.total > 20000) errors.push('设计超过冻结版上限：500 个样本、100 个 assay 或 20000 个反应（含对照）。请拆分项目。');
     for (const [id, override] of Object.entries(project.assayRecipes || {})) {
       if (!genes.some(g => g.id === id)) { errors.push('独立配方包含不存在的 assay。'); continue; }
-      const checked = validate({ ...assayProject(project, id), assayRecipes: {} });
+      const checked = validate({ ...assayProject(project, id), assayRecipes: {}, ...(Single.isMode(project) ? { settings: { ...settings, layoutMode: 'gene' } } : {}) }, Single.isMode(project));
       errors.push(...checked.errors.map(e => genes.find(g => g.id === id).name + '：' + e));
       warnings.push(...checked.warnings.map(w => genes.find(g => g.id === id).name + '：' + w));
     }
@@ -301,6 +301,7 @@
       try { if (parseReserved(settings.reserved || [], type).length === type) errors.push('所有孔均已保留，没有可用孔。'); }
       catch (e) { errors.push(e.message); }
     }
+    if (!errors.length && Single.isMode(project)) { const single = Single.validate(project, singleAPI()); errors.push(...single.errors); warnings.push(...single.warnings); }
     return { errors, warnings };
   }
 
@@ -535,7 +536,7 @@
   function labPlan(project, reserved) {
     const groups = reactionGroups(project), sample = project.controls.calibratorSample;
     const firstCalibrationGroups = sample ? activeGenes(project).map(gene => groups.find(g => g.type === 'sample' && g.sample === sample && g.geneId === gene.id) || { type: 'calibrator', sample, geneId: gene.id, reactions: [{ id: ['calibrator',sample,gene.id,1].join('|'), type:'calibrator', sample, geneId:gene.id, gene:gene.name, geneType:gene.type, replicate:1, replicateTotal:1 }] }) : [];
-    const packed = Lab.generateLabPriorityLayout(project, { groups, reserved, firstCalibrationGroups, controlsForPlate: (base,index) => plateAdditions(project,base,index) });
+    const packed = (Single.isMode(project) ? Single.generateLayout : Lab.generateLabPriorityLayout)(project, { groups, reserved, firstCalibrationGroups, controlsForPlate: (base,index) => plateAdditions(project,base,index) });
     if (packed.reduce((n,p)=>n+p.wells.length,0)>20000) throw new Error('逐板对照和校准使反应总数超过 20000，请拆分项目。');
     return packed;
   }
@@ -605,7 +606,7 @@
     project = normalizeProject(project);
     try {
       const reserved = parseReserved(project.settings.reserved || [], project.plateType);
-      const packed = project.settings.layoutMode === Lab.MODE ? labPlan(project,reserved) : null;
+      const packed = [Lab.MODE, Single.MODE].includes(project.settings.layoutMode) ? labPlan(project,reserved) : null;
       const allocation = packed ? packed.map(p => p.wells) : plannedAllocation(project,reserved);
       return { ok:true, expected:countReactions(allocation.flat()), plateCount:allocation.length, loads:allocation.map(p=>p.length), capacity:project.plateType-reserved.length, layoutMetadata:packed?.map(p=>p.layoutMetadata) };
     }
@@ -617,23 +618,36 @@
     project = normalizeProject(project);
     const type = Number(project.plateType), reserved = parseReserved(project.settings.reserved, type), capacity = type - reserved.length;
     if (capacity < 1) return { ok: false, errors: ['保留孔已占满孔板。'], warnings: validation.warnings };
-    let allocation, packed; try { packed = project.settings.layoutMode === Lab.MODE ? labPlan(project,reserved) : null; allocation = packed ? packed.map(p=>p.wells) : plannedAllocation(project, reserved); } catch (error) { return { ok: false, errors: [error.message], warnings: validation.warnings }; }
+    let allocation, packed; try { packed = [Lab.MODE, Single.MODE].includes(project.settings.layoutMode) ? labPlan(project,reserved) : null; allocation = packed ? packed.map(p=>p.wells) : plannedAllocation(project, reserved); } catch (error) { return { ok: false, errors: [error.message], warnings: validation.warnings }; }
     const expected = countReactions(allocation.flat());
     if (expected.total > 20000) return { ok: false, errors: ['逐板对照和校准使反应总数超过 20000，请拆分项目。'], warnings: validation.warnings };
     if (!expected.total) return { ok: false, errors: ['当前设计没有任何反应。'], warnings: validation.warnings };
     const plates = allocation.map((reactions, i) => {
       const chosen = packed ? packed[i] : chooseLayout(reactions, type, reserved, project.settings, project.genes, project.samples);
-      return { ...chosen, number: i + 1, capacity, wells: chosen.wells, layout: chosen.name, sequence: chosen.sequence, score: chosen.score, mixes: mixFor(chosen.wells, project) };
+      return { ...chosen, number: i + 1, capacity, wells: chosen.wells, layout: chosen.name || chosen.layout, sequence: chosen.sequence, score: chosen.score, mixes: mixFor(chosen.wells, project) };
     });
     try { assertInvariant(project, plates, expected); }
     catch (error) { console.error('qPCR invariant failure', error, { project, plates, expected }); return { ok: false, errors: ['内部一致性检查失败，请重新生成。'], warnings: validation.warnings }; }
     const warnings = [...validation.warnings], infos = [];
-    for (const plate of plates) for (const mix of plate.mixes) if (mix.premix) for (const c of mix.premix.components) {
+    for (const plate of plates) for (const mix of plate.mixes) if (!Single.isMode(project) && mix.premix) for (const c of mix.premix.components) {
       const threshold = Number(project.settings.minPipetteVolume);
       if (c.total > 0 && c.total < threshold) warnings.push('Plate ' + plate.number + ' 配制 ' + mix.gene.name + ' ' + mix.premix.name + ' 时，' + c.displayName + ' 总吸取体积仅 ' + volume(c.total) + ' µL，低于可靠移液阈值 ' + volume(threshold) + ' µL；建议调整工作液浓度或配制更大体积。');
       else if (c.perReaction > 0 && c.perReaction < threshold) infos.push('Plate ' + plate.number + ' · ' + mix.gene.name + ' ' + c.name + ' 已通过独立 Mix 批量配制，实际吸取 ' + volume(c.total) + ' µL。');
     }
-    return { ok: true, plates, expected, capacity, reserved, warnings, infos, totals: recipeTotals(project.recipe) };
+    const result = { ok: true, plates, expected, capacity, reserved, warnings, infos, totals: recipeTotals(project.recipe) };
+    if (Single.isMode(project)) {
+      const plan = attachSingleChannel(project, plates); if (!plan.ok) return { ok: false, errors: plan.errors, warnings: [...warnings, ...plan.warnings] };
+      result.singleChannelPlan = plan; result.warnings = [...new Set([...warnings, ...plan.warnings])];
+    }
+    return result;
+  }
+
+  function singleAPI() { return { activeGenes, assayProject, recipeTotals, premixSelection, prepareCount, compressWells, reactionGroups, plateAdditions, parseReserved, parseWell }; }
+  function generateSingleChannelPipettingPlan(project, plates) { return Single.plan(normalizeProject(project), plates, singleAPI()); }
+  function attachSingleChannel(project, plates) {
+    const plan = generateSingleChannelPipettingPlan(project, plates);
+    if (plan.ok) for (const plate of plates) { plate.singleChannelSteps = plan.steps.filter(s => s.plateId === plate.number).map((s, i) => ({ ...s, index: i + 1 })); plate.singleChannelDesignKey = Single.designKey(normalizeProject(project)); plate.singleChannelAssignmentKey = Single.assignmentKey(plate); plate.singleChannelFingerprint = plan.fingerprint; }
+    return plan;
   }
 
   function pipettingBatches(wells, type, pipette, pitch = 'adjacent') {
@@ -651,6 +665,10 @@
     return batches;
   }
   function stepsFor(plate, project) {
+    if (Single.isMode(project)) {
+      if (!plate.singleChannelSteps || plate.singleChannelDesignKey !== Single.designKey(normalizeProject(project)) || plate.singleChannelAssignmentKey !== Single.assignmentKey(plate)) throw Error('单通道操作清单已失效，请重新生成或恢复项目。');
+      return plate.singleChannelSteps;
+    }
     const totals = recipeTotals(project.recipe), steps = [];
     if (plate.mixes.some(m => m.premix)) {
       for (const mix of plate.mixes.filter(m => m.premix)) steps.push({ kind: 'prepare-premix', title: '配制 ' + mix.gene.name + ' ' + mix.premix.name, perWell: mix.premix.perReaction, wells: [], total: mix.premix.total, prepare: mix.premix.prepare, components: mix.premix.components, note: '独立配制该 assay 的引物、探针及所选组分；配制量已包含余量。' });
@@ -699,6 +717,7 @@
   }
 
   function reagentSummary(plates, project) {
+    if (Single.isMode(project)) { const plan = generateSingleChannelPipettingPlan(project, plates); if (!plan.ok) throw Error(plan.errors.join('；')); return Single.summary(plan); }
     const rows = new Map(), transfers = [];
     function add(c, required, gene) {
       const key = JSON.stringify([c.role, c.displayName, ['forward_primer', 'reverse_primer', 'probe'].includes(c.role) ? gene.id : '']);
@@ -738,15 +757,15 @@
       if (!saved || saved.number !== index + 1 || !Array.isArray(saved.wells) || !saved.wells.length) throw new Error('保存的孔板结构错误。');
       const wells = saved.wells.map(entry => {
         if (!entry || !reactions.has(entry.reactionId) || allIds.has(entry.reactionId) || !parseWell(entry.well, project.plateType)) throw new Error('保存的孔位映射无效，请检查项目文件。');
-        if (project.settings.layoutMode === Lab.MODE && entry.placementKind && !['standard','compact','strip','control'].includes(entry.placementKind)) throw new Error('保存的布局区域类型无效。');
+        if ([Lab.MODE, Single.MODE].includes(project.settings.layoutMode) && entry.placementKind && !['standard','compact','strip','control'].includes(entry.placementKind)) throw new Error('保存的布局区域类型无效。');
         allIds.add(entry.reactionId); const coord = coordinatesByWell.get(parseWell(entry.well, project.plateType));
-        return { ...reactions.get(entry.reactionId), ...coord, ...(project.settings.layoutMode === Lab.MODE ? { placementKind: entry.placementKind || 'strip' } : {}) };
+        return { ...reactions.get(entry.reactionId), ...coord, ...([Lab.MODE, Single.MODE].includes(project.settings.layoutMode) ? { placementKind: entry.placementKind || 'strip' } : {}) };
       });
-      return { ...(project.settings.layoutMode === Lab.MODE ? {layoutMetadata:Lab.metadata(project,wells)} : {}), number: saved.number, capacity: generated.capacity, layout: 'saved', sequence: project.settings.layoutMode === 'sample' ? 'sample' : 'gene', score: 0, wells, mixes: mixFor(wells, project) };
+      return { ...([Lab.MODE, Single.MODE].includes(project.settings.layoutMode) ? {layoutMetadata:(Single.isMode(project)?Single:Lab).metadata(project,wells)} : {}), number: saved.number, capacity: generated.capacity, layout: 'saved', sequence: project.settings.layoutMode === 'sample' ? 'sample' : 'gene', score: 0, wells, mixes: mixFor(wells, project) };
     });
     if (allIds.size !== reactions.size) throw new Error('保存的孔位映射缺少反应；不会自动替换为新排板。');
     assertInvariant(project, plates, generated.expected);
-    if (project.settings.layoutMode === Lab.MODE) Lab.assertLayout(project,plates);
+    if ([Lab.MODE, Single.MODE].includes(project.settings.layoutMode)) (Single.isMode(project)?Single:Lab).assertLayout(project,plates);
     if (project.controls.scope === 'plate') for (const plate of plates) {
       if (plate.wells.some(r => ['ntc','noRT','positive'].includes(r.type) && !r.id.endsWith('|plate' + plate.number))) throw new Error('逐板对照被移动到了另一块孔板。');
       for (const gene of activeGenes(project).filter(g => plate.wells.some(r => r.geneId === g.id))) {
@@ -757,8 +776,10 @@
       }
     }
     if (project.controls.calibratorSample) for (const plate of plates) for (const gene of activeGenes(project)) if (!plate.wells.some(r => r.sample === project.controls.calibratorSample && r.geneId === gene.id && ['sample', 'calibrator'].includes(r.type))) throw new Error('旧排板的跨板校准覆盖不完整，请明确重新排板。');
-    return { project, result: { ...generated, plates }, execution: value.execution || null, restored: true };
+    const singlePlan = Single.isMode(project) ? attachSingleChannel(project, plates) : null;
+    if (singlePlan && !singlePlan.ok) throw Error(singlePlan.errors.join('；'));
+    return { project, result: { ...generated, plates, ...(singlePlan ? { singleChannelPlan: singlePlan } : {}) }, execution: value.execution || null, restored: true };
   }
 
-  return { VERSION, APP_VERSION, LAYOUT_VERSION, NEW_PROJECT_DEFAULTS, ROWS, COLS, DEFAULT_CHECKLIST, demo, newProject, qcEnabled, localDate, normalizeProject, pairSelected, activeGenes, assayProject, coordinates, parseWell, parseReserved, compressWells, parseNames, duplicates, round, volume, recipeTotals, validate, reactionGroups, expectedCounts, effectiveNtcReplicates, capacityPlan, generate, assertInvariant, stepsFor, pipettingBatches, reagentSummary, csv, saveObject, loadObject, restoreObject };
+  return { VERSION, APP_VERSION, LAYOUT_VERSION, NEW_PROJECT_DEFAULTS, ROWS, COLS, DEFAULT_CHECKLIST, demo, newProject, qcEnabled, localDate, normalizeProject, pairSelected, activeGenes, assayProject, coordinates, parseWell, parseReserved, compressWells, parseNames, duplicates, round, volume, recipeTotals, prepareCount, premixSelection, generateSingleChannelPipettingPlan, validate, reactionGroups, expectedCounts, effectiveNtcReplicates, capacityPlan, generate, assertInvariant, stepsFor, pipettingBatches, reagentSummary, csv, saveObject, loadObject, restoreObject };
 });

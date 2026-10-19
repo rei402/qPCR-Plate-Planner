@@ -65,6 +65,16 @@
     return null;
   }
   function strip(board, project, group, kind = 'strip') {
+    if(project.settings.layoutMode==='singleChannelOptimized' && group.type!=='sample' && group.reactions.length>12){
+      const reactions=[...group.reactions].sort((a,b)=>a.replicate-b.replicate), count=reactions.length;
+      for(const region of regions(project.plateType))for(let start=0;start<=96-count;start++){
+        if(!reactions.every((_,i)=>free(board,region,Math.floor((start+i)/12),(start+i)%12)))continue;
+        const next=cloneBoard(board);
+        for(let offset=0;offset<count;){const index=start+offset,length=Math.min(count-offset,12-index%12);put(next,{...group,reactions:reactions.slice(offset,offset+length)},region,Math.floor(index/12),index%12,kind);offset+=length;}
+        return next;
+      }
+      return null;
+    }
     for (const region of regions(project.plateType)) {
       const position = findHorizontalRun(board, region, group.reactions.length);
       if (position) { const next = cloneBoard(board); put(next, group, region, position.row, position.col, kind); return next; }
@@ -105,6 +115,7 @@
   }
   function summary(project, plate) {
     const m=plate.layoutMetadata; if (!m) return [];
+    if(m.longReplicates)return ['技术重复超过 12：同一逻辑 96 孔区内逐行连续换行，未使用单行标准列组。', m.primaryReferenceName?'主内参 '+m.primaryReferenceName+' 优先贴近'+(m.referenceRowPreference==='bottom'?'底部':'顶部')+'边缘；实际行 '+m.referenceRows.join('/'):'无主内参；不预留内参行', ...m.regions.map(q=>q.id+' '+q.name+' · '+localToGlobalWell(q,0,0)+'–'+localToGlobalWell(q,7,11))];
     const code=sample=>'S'+String(project.samples.indexOf(sample)+1).padStart(2,'0');
     return [
       m.primaryReferenceName ? `主内参 ${m.primaryReferenceName}：标准区 ${m.referenceRows.join('/')} 行；紧凑矩形${m.referenceRowPreference==='bottom'?'末':'首'}行` : '无主内参；不预留内参行',
@@ -119,7 +130,10 @@
         const assigned = [...group.reactions].sort((a, b) => a.replicate - b.replicate), first = assigned[0];
         if (group.type === 'sample' && new Set(assigned.map(w=>w.placementKind)).size !== 1) throw new Error('同一技术重复组的布局类型必须一致。');
         if (group.type === 'sample' && assigned.length !== Number(project.replicates)) throw new Error('实验室布局不能拆开技术重复组。');
-        if (assigned.some((w, i) => w.r !== first.r || w.c !== first.c + i || Number(project.plateType) === 384 && Math.floor(w.c / 12) !== Math.floor(first.c / 12))) throw new Error('实验室布局的技术重复必须水平连续且不跨区域。');
+        if(project.settings.layoutMode==='singleChannelOptimized' && group.type!=='sample' && assigned.length>12){
+          const start=first.r%8*12+first.c%12;
+          if(assigned.some((w,i)=>Math.floor(w.r/8)!==Math.floor(first.r/8)||Math.floor(w.c/12)!==Math.floor(first.c/12)||w.r%8*12+w.c%12!==start+i))throw new Error('长对照重复必须在同一区域内逐行连续。');
+        }else if (assigned.some((w, i) => w.r !== first.r || w.c !== first.c + i || Number(project.plateType) === 384 && Math.floor(w.c / 12) !== Math.floor(first.c / 12))) throw new Error('实验室布局的技术重复必须水平连续且不跨区域。');
         for (const w of assigned.filter(w => w.placementKind === 'standard')) if (w.r % 8 !== rows.get(w.geneId)) throw new Error('标准布局的主内参或 assay 行不一致。');
       }
       for (const block of metadata(project, plate.wells).standardBlocks) if (block.lastColumn - block.firstColumn + 1 !== Number(project.replicates) || (block.firstColumn-1)%12%Number(project.replicates)!==0) throw new Error('标准样品未使用固定技术重复列组。');
