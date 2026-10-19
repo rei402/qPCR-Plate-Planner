@@ -163,6 +163,7 @@
     try { validateAssignments(project, plates, Q); } catch (e) { return { ok: false, errors: [e.message], warnings, sources, tasks, steps }; }
     const chemistryById = new Map(chemistry(project, Q).assays.map(a => [a.gene.id, a]));
     const assigned = plates.flatMap(p => p.wells), rackIndex = { primer: 0, sampleMix: 0 };
+    if(Number(project.replicates)<=12 && assigned.some(w=>w.type!=='sample'&&w.replicateTotal>12))warnings.push('对照重复超过 12，已在同一逻辑 96 孔区域内逐行连续换行；普通样品仍按实际技术重复宽度布局。请按真实孔位清单复核。');
     function addSource(phase, identity, label, parts, reactions, premix, info = {}) {
       if (!reactions.length) return;
       const key = sourceKey(phase, identity), i = rackIndex[phase]++, d = cfg[phase], custom = Object.hasOwn(cfg.sources, key) ? cfg.sources[key] : {};
