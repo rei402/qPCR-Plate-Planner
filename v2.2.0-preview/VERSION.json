@@ -1,0 +1,11 @@
+{
+  "tool": "qPCR Plate Planner",
+  "version": "2.2.0",
+  "status": "incremental-upgrade",
+  "releaseDate": "2026-10-19",
+  "frozenBaseline": "2.1.2",
+  "entry": "qPCR Plate Planner.html",
+  "windowsEntry": "qPCR Plate Planner.exe",
+  "projectSchemaVersion": 1,
+  "layoutVersion": 3
+}
