@@ -1,4 +1,4 @@
-const CACHE_PREFIX = 'qpcr-planner-' + encodeURIComponent(self.registration?.scope || self.location.origin) + '-';
+const CACHE_PREFIX = 'qpcr-plate-planner-scoped-' + encodeURIComponent(self.registration?.scope || self.location.origin) + '-';
 const CACHE = CACHE_PREFIX + 'v2.2.0';
 const ASSETS = ['./qPCR%20Plate%20Planner.html', './styles.css', './tablet-guide.css', './print.css', './lab-layout.js', './core.js', './single-channel.js', './single-channel-ui.js', './single-channel.css', './plate-colors.js', './presentation.js', './selection.js', './tablet-guide-core.js', './tablet-guide.js', './execution.js', './project-io.js', './form-controller.js', './plate-renderer.js', './print-controller.js', './update-safety.js', './app.js', './manifest.json', './icons/icon.svg', './icons/icon-192.png', './icons/icon-512.png'];
 self.addEventListener('install', event => { event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS))); });

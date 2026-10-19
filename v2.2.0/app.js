@@ -11,7 +11,8 @@
   const state = { project: null, result: null, plate: 0, step: 0, tab: 'mix', editorActive: false, selectedWells: new Set(), previewWells: new Set(), selectionAnchor: null, lastSelectedWell: null, hoverWells: new Set(), drag: null, dragFrame: 0, editHistory: { undo: [], redo: [] }, reservedDirty: false, selectedWell: '', presets: {}, checklist: Q.DEFAULT_CHECKLIST.map(g => [...g]), disabledChecklist: new Set(), premixSelectedIds: new Set(), premixWaste: null, premixExtra: null, componentCounter: 0, plateZoom: 1 };
   Object.assign(state, { sampleMetadata: Object.create(null), geneRecords: [], assaySelection: null, assayRecipes: Object.create(null), execution: null, dirty: false, draftTimer: 0, draftSaved: false });
   let capacityTimer = 0;
-  let draftStorage; try { draftStorage = IO.draftStore(localStorage); } catch (_) { draftStorage = IO.draftStore({ getItem() { return null; }, setItem() { throw new Error('storage disabled'); }, removeItem() {} }); }
+  function localStore() { return IO.deploymentStorage(localStorage, window.location); }
+  let draftStorage; try { draftStorage = IO.draftStore(localStore()); } catch (_) { draftStorage = IO.draftStore({ getItem() { return null; }, setItem() { throw new Error('storage disabled'); }, removeItem() {} }); }
   const roleNames = { mastermix: '通用 Mix', forward_primer: '正向引物', reverse_primer: '反向引物', probe: '探针', water: '水', template: '模板', other: '其他' };
   const typeNames = { sample: 'Sample', ntc: 'NTC', noRT: 'No-RT', positive: 'Positive control', calibrator: '跨板校准' };
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -27,15 +28,15 @@
   function flash(message, kind = 'info') { $('validationMessages').innerHTML = `<div class="message ${kind}">${esc(message)}</div>`; }
   function storePreferences() {
     try {
-      localStorage.setItem('qpcr-preferences-v1', JSON.stringify({ defaultsRevision: 1, paletteId: state.paletteId || Q.NEW_PROJECT_DEFAULTS.paletteId, plateType: $('plateType').value, replicates: $('replicates').value, wastePercent: $('wastePercent').value, minimumExtra: $('minimumExtra').value, minPipetteVolume: $('minPipetteVolume').value, pipette: $('pipette').value, layoutMode: $('layoutMode').value, referenceRowPreference:$('referenceRowPreference').value, allocationMode: $('allocationMode').value, printOrientation: printOrientation(), plateZoom: state.plateZoom, checklist: state.checklist, disabledChecklist: [...state.disabledChecklist] }));
+      localStore().setItem('qpcr-preferences-v1', JSON.stringify({ defaultsRevision: 1, paletteId: state.paletteId || Q.NEW_PROJECT_DEFAULTS.paletteId, plateType: $('plateType').value, replicates: $('replicates').value, wastePercent: $('wastePercent').value, minimumExtra: $('minimumExtra').value, minPipetteVolume: $('minPipetteVolume').value, pipette: $('pipette').value, layoutMode: $('layoutMode').value, referenceRowPreference:$('referenceRowPreference').value, allocationMode: $('allocationMode').value, printOrientation: printOrientation(), plateZoom: state.plateZoom, checklist: state.checklist, disabledChecklist: [...state.disabledChecklist] }));
     } catch (_) { /* 本地存储禁用时，核心功能仍可运行 */ }
   }
   function loadStorage() {
     try {
-      state.presets = JSON.parse(localStorage.getItem('qpcr-presets-v1') || '{}');
+      state.presets = JSON.parse(localStore().getItem('qpcr-presets-v1') || '{}');
       if (!state.presets || typeof state.presets !== 'object' || Array.isArray(state.presets)) state.presets = {};
       state.presets = Object.assign(Object.create(null),state.presets);
-      const pref = JSON.parse(localStorage.getItem('qpcr-preferences-v1') || '{}');
+      const pref = JSON.parse(localStore().getItem('qpcr-preferences-v1') || '{}');
       for (const key of ['plateType', 'replicates', 'wastePercent', 'minimumExtra', 'minPipetteVolume', 'pipette', 'referenceRowPreference', 'allocationMode']) if (pref[key] !== undefined && $(key)) $(key).value = pref[key];
       // Adopt revised defaults once; subsequently retain choices made with this profile.
       if (pref.defaultsRevision === 1) {
@@ -48,7 +49,7 @@
       if (Array.isArray(pref.disabledChecklist) && pref.disabledChecklist.every(x => typeof x === 'string')) state.disabledChecklist = new Set(pref.disabledChecklist);
     } catch (_) { state.presets = Object.create(null); }
   }
-  function savePresets() { try { localStorage.setItem('qpcr-presets-v1', JSON.stringify(state.presets)); } catch (_) { flash('浏览器无法保存本机预设；仍可导出项目 JSON。', 'warning'); } }
+  function savePresets() { try { localStore().setItem('qpcr-presets-v1', JSON.stringify(state.presets)); } catch (_) { flash('浏览器无法保存本机预设；仍可导出项目 JSON。', 'warning'); } }
 
   function snapshot() { return { ...Q.saveObject(state.project || readProject(), state.result, state.execution), generated: !!state.result, navigation: { plate: state.plate, step: state.step } }; }
   function status() { $('projectStatus').textContent = `${state.dirty ? '● 有未导出的修改' : '✓ 项目已导出或载入'}${state.draftSaved ? ' · 本机草稿已保存' : state.pendingDraft ? ' · 请先恢复或丢弃旧草稿以启用自动保存' : ' · 本机草稿尚未保存'}`; }
