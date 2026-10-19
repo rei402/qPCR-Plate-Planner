@@ -87,7 +87,7 @@
     }
   }
   function generateLayout(project, context) {
-    if (Number(project.replicates) <= 12) return Lab.generateLabPriorityLayout(project, context);
+    if (Number(project.replicates) <= 12) return Lab.generateLabPriorityLayout(project, context).map(p=>({...p,layout:MODE,layoutMetadata:metadata(project,p.wells)}));
     // More than twelve repeats cannot fit one quadrant row; use consecutive local row-major runs.
     const { groups, reserved, controlsForPlate, firstCalibrationGroups=[] } = context;
     const main = groups.filter(g=>g.type==='sample'), projectControls = project.controls.scope==='plate'?[]:groups.filter(g=>g.type!=='sample');
