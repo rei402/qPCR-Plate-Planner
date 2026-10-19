@@ -1,0 +1,94 @@
+@page { size: A4 landscape; margin: 8mm; }
+
+.print-page {
+  box-sizing: border-box;
+  background: #fff;
+  color: #171717;
+  font: 7.8pt/1.25 Arial, "Microsoft YaHei", sans-serif;
+}
+.print-page h1 { font-size: 15pt; margin: 0 0 1mm; }
+.print-page h2 { font-size: 9pt; margin: 1.8mm 0 1mm; padding-bottom: .6mm; border-bottom: .25mm solid #aab1b8; }
+.print-header { border-bottom: .35mm solid #303b45; padding-bottom: 1.5mm; }
+.print-header p { display: inline-block; margin: 0 5mm 0 0; }
+.print-body { gap: 2.5mm 4mm; }
+.print-body > section { min-width: 0; }
+.print-map { break-inside: avoid; page-break-inside: avoid; }
+.print-map .plate-svg { display: block; width: 100%; min-width: 0 !important; max-height: none !important; height: auto; }
+.print-page .plate-svg .well-bg { fill: #fff !important; stroke: #363d43 !important; stroke-width: .9 !important; }
+.print-page .plate-svg .well.reserved .well-bg { fill: #dadde0 !important; stroke-dasharray: 2 2 !important; }
+.print-page .plate-svg text { fill: #111 !important; }
+.print-page .plate-svg .well.highlighted .well-bg,
+.print-page .plate-svg .well.selected .well-bg { stroke: #363d43 !important; stroke-width: .9 !important; }
+.print-key { margin: .5mm 0; font-size: 7pt; }
+.print-legend-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 3mm; }
+.print-legend-grid strong { display: block; margin-bottom: .5mm; }
+.print-legend-items { column-count: 2; column-gap: 3mm; }
+.print-legend-items span { display: block; overflow-wrap: anywhere; break-inside: avoid; page-break-inside: avoid; }
+.print-legend-items b { white-space: nowrap; }
+.print-mix { border-bottom: .2mm solid #d2d7dc; padding: .8mm 0; break-inside: avoid; page-break-inside: avoid; }
+.print-mix div { font-size: 7.2pt; overflow-wrap: anywhere; }
+.print-checklist { columns: 2; column-gap: 3mm; }
+.print-check-group { display: inline-block; width: 100%; margin-bottom: .8mm; break-inside: avoid; page-break-inside: avoid; }
+.print-check-group strong, .print-check-group span { display: block; overflow-wrap: anywhere; }
+.print-notes p { margin: .5mm 0; font-size: 7.2pt; overflow-wrap: anywhere; }
+
+/* 96 横向：板图占左侧，配制信息在右侧。 */
+.print-96.print-landscape .print-body { display: grid; grid-template-columns: minmax(0, 61%) minmax(0, 39%); }
+.print-96.print-landscape .print-map { grid-column: 1; grid-row: 1 / span 2; }
+.print-96.print-landscape .print-mixes { grid-column: 2; grid-row: 1; }
+.print-96.print-landscape.has-premix .print-premixes { grid-column: 2; grid-row: 1; }
+.print-96.print-landscape.has-premix .print-mixes { grid-column: 2; grid-row: 2; }
+.print-96.print-landscape .print-legend { grid-column: 1; grid-row: 3; }
+.print-96.print-landscape .print-checks { grid-column: 2; grid-row: 3; }
+.print-96.print-landscape .print-notes { grid-column: 1 / -1; grid-row: 4; }
+.print-96.print-landscape .plate-svg .well-label { font-size: 12px; }
+.print-96.print-landscape .plate-svg .well-sub { font-size: 9.5px; }
+
+/* 384 横向：24 列板图使用完整纸宽；后续资料可自然流到第二页。 */
+.print-384.print-landscape .print-body { display: block; }
+.print-384.print-landscape .print-body > section { margin-top: 1.5mm; }
+.print-384.print-landscape .print-mixes,
+.print-384.print-landscape .print-premixes { columns: 2; column-gap: 4mm; }
+.print-384.print-landscape .print-mixes h2,
+.print-384.print-landscape .print-premixes h2 { column-span: all; }
+.print-384.print-landscape .print-samples .print-legend-items { column-count: 3; }
+.print-384.print-landscape .plate-svg .well-label { font-size: 11.8px; font-weight: 600; }
+.print-384.print-landscape .plate-svg .well-sub { font-size: 10px; font-weight: 500; }
+
+/* 纵向是完整的单栏流程，不复用横向的左右两栏。 */
+.print-portrait .print-body { display: block; }
+.print-portrait .print-body > section { margin-top: 1.2mm; }
+.print-portrait .print-legend-grid { grid-template-columns: minmax(0, 3fr) minmax(0, 1fr); }
+.print-portrait .print-samples .print-legend-items { column-count: 3; }
+.print-portrait .print-mixes, .print-portrait .print-premixes { columns: 2; column-gap: 4mm; }
+.print-portrait .print-mixes h2, .print-portrait .print-premixes h2 { column-span: all; }
+.print-96.print-portrait .print-samples .print-legend-items { column-count: 2; }
+.print-96.print-portrait .plate-svg .well-label { font-size: 12.2px; }
+.print-96.print-portrait .plate-svg .well-sub { font-size: 10px; }
+.print-384.print-portrait .print-samples .print-legend-items { column-count: 4; }
+.print-384.print-portrait .plate-svg .well-label { font-size: 12.4px; font-weight: 600; }
+.print-384.print-portrait .plate-svg .well-sub { font-size: 10.8px; font-weight: 500; }
+.print-384.print-portrait .plate-svg .col-label { font-size: 11px; }
+
+@media screen {
+  .print-preview { overflow: hidden; background: #e8edf2; border: 1px solid #d3dce5; border-radius: 8px; padding: 12px; margin-top: 10px; }
+  .preview-holder { margin: 0 auto; position: relative; }
+  .print-preview .print-page { transform-origin: top left; box-shadow: 0 2px 14px #183b6330; }
+  .print-preview .print-landscape { width: 297mm; min-height: 210mm; padding: 8mm; }
+  .print-preview .print-portrait { width: 210mm; min-height: 297mm; padding: 8mm; }
+  .print-preview .print-384.print-portrait { padding: 5mm; }
+}
+
+@media print {
+  html, body { margin: 0 !important; padding: 0 !important; background: #fff !important; }
+  body > *:not(#printSheet) { display: none !important; }
+  #printSheet { display: block !important; }
+  .print-page { width: auto !important; min-height: 0 !important; padding: 0 !important; box-shadow: none !important; break-after: page; page-break-after: always; }
+  .print-page:last-child { break-after: auto; page-break-after: auto; }
+  .print-page .plate-svg { min-width: 0 !important; }
+}
+
+.reagent-page { overflow: visible; }
+.reagent-page .data-table { font-size: 10pt; }
+.reagent-page .data-table td, .reagent-page .data-table th { padding: 2mm; }
+@media print { .reagent-page { break-after: page; } }
